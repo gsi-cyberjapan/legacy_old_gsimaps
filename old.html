@@ -1,0 +1,2152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="robots" content="noindex" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="" />
+<title></title>
+<script src="OpenLayers-2.13.1/OpenLayers.js"></script>
+<script src="js/mapuse4.js"></script>
+<script src="js/jquery.dynatree.min.js"></script>
+<link rel="stylesheet" href="shared/palette/css/reset.css"/>
+<link rel="stylesheet" href="shared/palette/css/ui-lightness/jquery-ui-1.8.16.custom.css"/>
+<link rel="stylesheet" href="shared/palette/css/sakuzu.css"/>
+<link rel="stylesheet" href="css/cs.css"/>
+<link rel="stylesheet" href="css/webtis.css"/>
+<link rel="stylesheet" href="css/TabbedPanels.css"/>
+<link rel="stylesheet" href="css/transparentslider.css"/>
+<link rel="stylesheet" href="css/scalebar.css"/>
+<link rel="stylesheet" href="css/accordion.css"/>
+<link rel="stylesheet" href="css/ui-tab.css"/>
+<link rel="stylesheet" href="css/skin/ui.dynatree.css"/>
+<link rel="stylesheet" href="css/sliderctrl.css"/>
+<link rel="stylesheet" href="css/GisOverviewMap.css"/>
+<link rel="stylesheet" href="css/sakuzu.css"/>
+<link rel="stylesheet" href="css/treectrl.css"/>
+<style type="text/css">
+#Left {border-right: 1px solid #000;}
+#header {border-bottom: 1px solid #000;}
+td {font-size: 9pt;}
+body {overflow: hidden;}
+a.fullscreen {cursor: default;}
+a.fullscreen:hover {cursor: default;}
+#pointerlink:hover {cursor: pointer;}
+.hokachizu {
+	background-color: #5ce; font-size: 14px; position: absolute;
+	padding-bottom: 2px; padding-left: 12px; padding-top: 1px;
+}
+.hokachizu a {
+	color: #fff; font-weight: bold;	text-decoration: none;
+}
+.sizemenu {
+	width: 50px; padding: 3px 0px 2px 5px; background-color: #fed;
+	border-top: 1px solid #fee;	border-right: 1px solid maroon;
+	border-bottom: 1px solid maroon; border-left: 1px solid #fee;
+}
+.selmaptitle {
+  color: #000; font-size: 14px;	margin-bottom: 2px;	font-weight: bold;
+}
+a.sel {text-decoration: none; color: #000;	cursor: default;}
+a:hover.sel {text-decoration: none; color: #000;}
+@media print { .insatu {display: none;} }
+.default_text {color: #ccc;}
+.sz_size_selecter {
+	vertical-align: middle;	cursor: pointer; border: 1px solid black;
+	text-align: center;	width: 40px; height: 40px;
+}
+.sz_size_list {vertical-align: middle;	cursor: pointer; text-align: left;}
+.sz_size_list:hover {background-color: #CAFFFF;}
+.sz_line_width {vertical-align: middle;	cursor: pointer; text-align: center;}
+#popup_clipboard {
+	background-color: #fed;	width: 273px;	padding: 3px 0px 2px 5px;
+	border-top: 1px solid #fee;	border-right: 1px solid maroon;
+	border-bottom: 1px solid maroon; border-left: 1px solid #fee;
+}
+#popup_clipboard:hover,#popup_clipboard.hover {background-color: #fa9;}
+.configMenu {font-size: 14px;	top: 50px;}
+.configMenuItem {
+	padding: 3px 0px 2px 5px;
+	background-color: #FFFFFF;
+	border-top: 1px solid rgb(51, 51, 255);
+	border-right: 1px solid rgb(51, 51, 255);
+	border-bottom: 1px solid rgb(51, 51, 255);
+	border-left: 1px solid rgb(51, 51, 255);
+	font-size: 14px;
+	color: rgb(51, 51, 255);
+	cursor: pointer;
+}
+.configMenuItem:hover {background-color: #FFFFC2;}
+.configMenuTitle {
+	padding: 3px 0px 2px 5px;
+	background-color: rgb(51, 51, 255);
+	border-top: 1px solid rgb(51, 51, 255);
+	border-right: 1px solid rgb(51, 51, 255);
+	border-bottom: 1px solid rgb(51, 51, 255);
+	border-left: 1px solid rgb(51, 51, 255);
+	font-size: 12px;
+	color: #ffffff;
+}
+.configMenuMarker {
+	position: absolute;	right: 6px;	background-color: transparent;
+	font-size: 12px; font-weight: bold;	margin-top: 2px; color: #2aa;
+}
+</style>
+
+<script type="text/javascript"><!--
+var userAgent = window.navigator.userAgent.toLowerCase();
+var isTab = false;
+var isMob = false;
+if((navigator.userAgent.indexOf('Android') > 0 && navigator.userAgent.indexOf('Mobile') == -1) || navigator.userAgent.indexOf('iPad') > 0){
+	isTab = true;
+} else if ((navigator.userAgent.indexOf('iPhone') > 0 && navigator.userAgent.indexOf('iPad') == -1) || navigator.userAgent.indexOf('iPod') > 0 || (navigator.userAgent.indexOf('Android') > 0 && navigator.userAgent.indexOf('Mobile') > 0)){
+	isMob = true;
+}
+var isNoMT = false;
+var projLonLat = new Proj4js.Proj('EPSG:4326');
+var projUTM = null;
+var projMerc = new Proj4js.Proj('EPSG:3857');
+webtis.Control.ShrinkMap = OpenLayers.Class(OpenLayers.Control, {
+	createCtrlImage: function(url, left, handler) {
+		var	image = document.createElement('img');
+		image.src = url;
+		image.style.position = "absolute";
+		image.style.left = left + "px";
+		image.style.width = '20px';
+		image.style.height = '20px';
+		image.title = '元に戻す';
+		image.alt = '元に戻す';
+		if (handler) {
+			OpenLayers.Event.observe(image, "mousedown",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+			OpenLayers.Event.observe(image, "click",
+				OpenLayers.Function.bindAsEventListener(handler, this));
+			OpenLayers.Event.observe(image, "dblclick",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+		}
+		this.div.appendChild(image);
+	},
+	draw: function (px) {
+		if (this.div == null) {
+			var mapSize = this.map.getSize();
+			this.div = OpenLayers.Util.createDiv(this.id);
+			this.div.style.position = "absolute";
+			this.div.style.top = 0 + "px";
+			this.div.style.left = 0 + "px";
+			this.createCtrlImage("http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/se2.gif", 0, function(e) {
+				arrange2();
+				OpenLayers.Event.stop(e);
+				return false;
+			});
+		}
+		return this.div;
+	},
+	adjustPositionOnMapResize: function() {
+		if (this.div != null) {
+			var mapSize = this.map.getSize();
+			this.div.style.top = 10 + "px";
+		}
+	},
+	CLASS_NAME: "webtis.Control.ShrinkMap"
+});
+
+OpenLayers.Control.Crosshairs = OpenLayers.Class(OpenLayers.Control, {
+	imgUrl: null,
+	size: null,
+	position: null,
+	initialize: function(options) {
+		OpenLayers.Control.prototype.initialize.apply(this, arguments);
+	},
+	draw: function() {
+		OpenLayers.Control.prototype.draw.apply(this, arguments);
+		var px = this.position.clone();
+		var centered = new OpenLayers.Pixel(Math.round(px.x - (this.size.w / 2)),
+       Math.round(px.y - (this.size.h / 2)));
+		this.buttons = new Array();
+		this.div = OpenLayers.Util.createAlphaImageDiv(
+				OpenLayers.Util.createUniqueID("OpenLayers.Control.Crosshairs_"),
+				centered,
+				this.size,
+				this.imgUrl,
+				"absolute");
+		return this.div;
+	},
+	setPosition: function(position) {
+		this.position = position;
+		var px = this.position.clone();
+		var centered = new OpenLayers.Pixel(Math.round(px.x - (this.size.w / 2)),
+      Math.round(px.y - (this.size.h / 2)));
+		this.div.style.left = centered.x + "px";
+		this.div.style.top = centered.y + "px";
+	},
+	CLASS_NAME: "OpenLayers.Control.Crosshairs"
+});
+
+webtis.Control.CloseButton = OpenLayers.Class(OpenLayers.Control, {
+	createCtrlImage: function(url, left, handler) {
+		var	image = document.createElement('img');
+		image.src = url;
+		image.id = 'img_measure';
+		image.title = "閉じる";
+		image.disabled = false;
+		image.style.position = "absolute";
+		image.style.left = left + "px";
+		image.style.width = '26px';
+		image.style.height = '26px';
+		if (handler) {
+			OpenLayers.Event.observe(image, "mousedown",
+				OpenLayers.Function.bindAsEventListener(handler, this));
+			OpenLayers.Event.observe(image, "click",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+			OpenLayers.Event.observe(image, "dblclick",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+		}
+		this.div.appendChild(image);
+	},
+	draw: function (px) {
+		if (this.div == null) {
+			var mapSize = this.map.getSize();
+			this.div = OpenLayers.Util.createDiv(this.id);
+			this.div.style.position = "absolute";
+			this.div.style.top = 42 + "px";
+			this.div.style.right = 32 + "px";
+			this.createCtrlImage("http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/close_F.png", 0, function(e) {
+				window.close();
+				OpenLayers.Event.stop(e);
+				return false;
+			});
+		return this.div;
+		}
+	},
+	adjustPositionOnMapResize: function() {
+		if (this.div != null) {
+			var mapSize = this.map.getSize();
+			this.div.style.top = 10 + "px";
+		}
+	},
+	CLASS_NAME: "webtis.Control.CloseButton"
+});
+
+webtis.Control.keisoku = OpenLayers.Class(OpenLayers.Control, {
+	createCtrlImage: function(url, left, handler) {
+		var	image = document.createElement('img');
+		image.src = url;
+		image.id = 'img_measure';
+		image.title = "距離・面積の計測";
+		image.disabled = false;
+		image.style.position = "absolute";
+		image.style.left = left + "px";
+		image.style.width = '31px';
+		image.style.height = '31px';
+		if (handler) {
+			OpenLayers.Event.observe(image, "mousedown",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+			OpenLayers.Event.observe(image, "click",
+				OpenLayers.Function.bindAsEventListener(handler, this));
+			OpenLayers.Event.observe(image, "dblclick",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+		}
+		this.div.appendChild(image);
+	},
+
+	draw: function (px) {
+		if (this.div == null) {
+			var mapSize = this.map.getSize();
+			this.div = OpenLayers.Util.createDiv(this.id);
+			this.div.style.position = "absolute";
+			this.div.style.top = 10 + "px";
+			this.div.style.right = 120 + "px";
+			this.createCtrlImage("http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/measure.png", 0, function(e) {
+				openMeasure(this);
+				OpenLayers.Event.stop(e);
+				return false;
+			});
+		return this.div;
+		}
+	},
+	adjustPositionOnMapResize: function() {
+		if (this.div != null) {
+			var mapSize = this.map.getSize();
+			this.div.style.top = 10 + "px";
+		}
+	},
+
+	CLASS_NAME: "webtis.Control.keisoku"
+});
+
+webtis.Control.djplogo = OpenLayers.Class(OpenLayers.Control, {
+	createCtrlImage: function(url, left, handler) {
+		var	image = document.createElement('img');
+		image.src = url;
+		image.style.position = "absolute";
+		image.style.left = left + "px";
+		image.style.width = '32px';
+		image.style.height = '32px';
+		image.title = '電子国土';
+		image.alt = '電子国土';
+		if (handler) {
+			OpenLayers.Event.observe(image, "mousedown",
+				OpenLayers.Function.bindAsEventListener(handler, this));
+			OpenLayers.Event.observe(image, "click",
+			OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+			OpenLayers.Event.observe(image, "dblclick",
+				OpenLayers.Function.bindAsEventListener(function(e) {
+					OpenLayers.Event.stop(e);
+					return false;
+				}, this));
+		}
+		this.div.appendChild(image);
+	},
+
+	draw: function (px) {
+		if (this.div == null) {
+			var mapSize = this.map.getSize();
+			this.div = OpenLayers.Util.createDiv(this.id);
+			this.div.style.position = "absolute";
+			this.div.style.bottom = 38 + "px";
+			this.div.style.left = 10 + "px";
+			this.createCtrlImage("http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/icon01.gif", 0, function(e) {
+				window.open("http://portal.cyberjapan.jp/", "_blank");
+				OpenLayers.Event.stop(e);
+				return false;
+			});
+		}
+		return this.div;
+	},
+	adjustPositionOnMapResize: function() {
+		if (this.div != null) {
+			var mapSize = this.map.getSize();
+			this.div.style.bottom = 38 + "px";
+		}
+	},
+	CLASS_NAME: "webtis.Control.djplogo"
+});
+
+var htmlName = document.location.href;
+var hikisu_all = htmlName.split("?");
+var hikisu_separate = hikisu_all[0].split("/");
+var map = null;
+var KeyboardDefaultsControl = null;
+var mapoClick = null;
+var initCX = 0;
+var initCY = 0;
+var fullscreenMode = false;
+var zoomcontrol = null;
+var shrinkcontrol = null;
+var clickmarkflg = 0;
+var marker;
+var flagmarker = 0;
+var dataId = null;
+var keyword = "";
+var execsearch = "";
+var setmarker = "";
+var kmlid = "";
+var dmsflag = 0;
+var initZoomLv = 5;
+var gZ18Flag = initZoomLv==18 ? true : false ;
+var curZoom = -1;
+var projection900913 = new OpenLayers.Projection("EPSG:900913");
+var projection4326 = new OpenLayers.Projection("EPSG:4326");
+var dispFlg = true;
+var sakuzuModule = null;
+var sakuzuSlider = null;
+var measureControls;
+var keisokuControl;
+var lonlatgv = 0;
+var djplogoControl;
+var csModule = null;
+var layerModule = null;
+var treeModule = null;
+var sliderModule = null;
+var pluginModule = [];
+var pluginSliderModule = [];
+var initialLibLayers = [];
+var isFullscreen = false;
+var overViewControl;
+var hasCloseButton = false;
+var closeButtonControl = null;
+var isIframe = false;
+var hasZoomCtrl = true;
+var hasScaleBar = true;
+var hasMapCtrl = true;
+var isSakuzu = true;
+var permalinkControl = null;
+var configMenu = null;
+var selectMapPanel = null;
+var webtisMap;
+var jihokuLayer = new OpenLayers.Layer.Vector("jihoku", {
+	styleMap: new OpenLayers.StyleMap({'default':{
+		labelXOffset: 25,
+		label: "${label}度",
+		fontColor: "#FF0000"
+	}})
+});
+var utmPointLayer = new OpenLayers.Layer.Vector("utmPoint", {
+	styleMap: new OpenLayers.StyleMap({'default':{
+			pointRadius: 12,
+			externalGraphic: "symbols/080t.png",
+			labelXOffset: 15, labelYOffset: 0,
+			label: "${zone}${mark}${mgrs}${utmx10m}${utmy10m}",
+			fontColor: "#ff0000", fontSize: "30px", fontWeight: "bold",
+			labelAlign: "lm"
+	}})
+});
+var popup;
+var popupflag;
+var timerID;
+var centercross = false;
+var iconlabel = false;
+var tabInit = 1;
+var dirInit = "";
+var tabIdList = {
+	"map": 1, "geodetic": 2, "saigai": 3,	"other": 4,	"sakuzu": 5, "search": 6
+};
+
+var popupcalc = new Array(
+  1280000, 640000, 320000, 160000, 80000, 40000, 20000, 10000, 5000,
+  2500, 1200, 600, 300, 150, 80, 40, 20, 10, 5);
+var crosshairs = null;
+var isReceiveGeoJson = false;
+var isReceivePrintData = false;
+
+function init() {
+  var url=location.search.substring(1);
+	if(url)	{
+		hikisu = hikisu_all[1].split("&");
+		initZoomLv = 15;
+		for (i in hikisu)	{
+			hikisu_value = hikisu[i].split("=");
+			if(hikisu_value[0] == "meshcode") {
+				var meshCodeThis = hikisu_value[1];
+				initCX = meshCodeThis.slice(2, 4) - 0 + 100 +
+          meshCodeThis.slice(5, 6) / 60 * 7.5 +
+          meshCodeThis.slice(7, 8) / 5 / 60 * 7.5 / 2+ 7.5 / 4 / 60;
+				initCY = meshCodeThis.slice(0, 2) / 1.5 +
+          meshCodeThis.slice(4, 5) / 60 * 5 +
+          meshCodeThis.slice(6, 7) / 5 / 60 * 5 / 2 + 5 / 4 /60;
+			} else if(hikisu_value[0] == "b")	{
+				var coord_b = hikisu_value[1];
+				initCY = coord_b.slice(0, 2) - 0 + coord_b.slice(2,4) / 60 +
+          coord_b.slice(4, 10) / 3600;
+			} else if(hikisu_value[0] == "l")	{
+				var coord_l = hikisu_value[1];
+				initCX = coord_l.slice(0, 3) - 0 + coord_l.slice(3, 5)/60 +
+          coord_l.slice(5, 10)/3600;
+			} else if(hikisu_value[0] == "latitude")	{
+				initCY = parseFloat(hikisu_value[1]);
+			} else if(hikisu_value[0] == "longitude")	{
+				initCX = parseFloat(hikisu_value[1]);
+			} else if(hikisu_value[0] == "lat")	{
+				initCY = parseFloat(hikisu_value[1]);
+			} else if(hikisu_value[0] == "lon")	{
+				initCX = parseFloat(hikisu_value[1]);
+			} else if(hikisu_value[0] == "z")	{
+				initZoomLv = parseInt(hikisu_value[1], 10);
+			} else if(hikisu_value[0] == "did")	{
+				dataId = hikisu_value[1];
+			} else if(hikisu_value[0] == "key")	{
+				keyword = hikisu_value[1];
+			} else if(hikisu_value[0] == "es")	{
+				execsearch = hikisu_value[1];
+				initZoomLv = 0;
+			} else if(hikisu_value[0] == "ma")	{
+				setmarker = hikisu_value[1];
+			} else if(hikisu_value[0] == "fid")	{
+				if (/[\\/.]/.test(hikisu_value[1]) == false) {
+					kmlid = hikisu_value[1];
+				}
+			} else if(hikisu_value[0].substring(0, 4) == "lkey") {
+				initialLibLayers[parseInt(hikisu_value[0].substring(4), 10)] =
+          {'key': hikisu_value[1]};
+			} else if(hikisu_value[0].substring(0,4) == "lopa") {
+				initialLibLayers[parseInt(hikisu_value[0].substring(4), 10)]['opacity'] = parseFloat(hikisu_value[1]);
+			} else if(hikisu_value[0] == "fsc")	{
+				isFullscreen = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "clb")	{
+				hasCloseButton = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "ifr") {
+				isIframe = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "sca") {
+				hasScaleBar = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "zmc") {
+				hasZoomCtrl = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "rvg") {
+				isReceiveGeoJson = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "skz") {
+				isSakuzu = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "crs") {
+				centercross = (hikisu_value[1] != "0");
+			} else if(hikisu_value[0] == "tab") {
+				tabInit = hikisu_value[1];
+			} else if(hikisu_value[0] == "dir") {
+				dirInit = hikisu_value[1];
+			} else if(hikisu_value[0] == "nmt") {
+				isNoMT = true;
+			} else if(hikisu_value[0] == "prt") {
+				isReceivePrintData = (hikisu_value[1] != "0");
+				if (isReceivePrintData) {
+					isIframe = true;
+					webtis.Layer.BaseMap.isShowLegend = false;
+					hasZoomCtrl = false; hasMapCtrl = false; printMapFlg = true;
+				}
+			}
+		}
+	}
+	var maxResolution = 156543.0339;
+	KeyboardDefaultsControl = new webtis.Control.GsiKeyboard();
+  var controls = []; /// FIXME
+	controls[0] = new OpenLayers.Control.Navigation({
+		mouseWheelOptions: {interval: 100}, handleRightClicks: true
+	});
+	controls[1] = new OpenLayers.Control.Attribution();
+	controls[2] = KeyboardDefaultsControl;
+	var options = {
+		controls: controls,
+		projection: projection900913, displayProjection: projection4326,
+		units: "m", maxResolution: maxResolution,
+		Z_INDEX_BASE: {
+			BaseLayer: 100, Overlay: 325,	Feature: 725,
+			Popup: 101750, Control: 102000
+		}
+	};
+	map = new OpenLayers.Map('map', options);
+	map.isValidZoomLevel = function(zoomLevel){
+    return ((zoomLevel != null) && (zoomLevel >= 2) &&
+      (zoomLevel < this.getNumZoomLevels()));
+  };
+  map.resetLayersZIndex = function() {};
+	if(hasZoomCtrl){
+		zoomcontrol = new webtis.Control.PanZoomBar({
+			slideFactor:100, minZoomLevel: 2
+		});
+		map.addControl(zoomcontrol);
+	}
+	if(hasScaleBar){
+		map.addControl(new OpenLayers.Control.ScaleBar({divisions:1}));
+	}
+	if(hasMapCtrl && !checkMT()){
+		mapfloating = new webtis.Control.MapFloating();
+		map.addControl(mapfloating);
+	}
+	if(!isIframe && !checkMT()){
+		document.getElementById("header").style.display = "block";
+		document.getElementById("Left").style.display = "block";
+		keisokuControl = new webtis.Control.keisoku();
+		map.addControl(keisokuControl);
+		printerControl = new webtis.Control.Printer();
+		map.addControl(printerControl);
+		overViewControl = new webtis.Control.GisOverviewMap();
+		map.addControl(overViewControl);
+	}
+	if(!isIframe && isSakuzu & !checkMT()) {
+		sz_buttonControl = new webtis.Control.sz_button();
+		map.addControl(sz_buttonControl);
+	}
+	if (hasCloseButton){
+		closeButtonControl = new webtis.Control.CloseButton();
+		map.addControl(closeButtonControl);
+	}
+	changeDataSet(dataId);
+	map.addLayer(jihokuLayer);
+	jihokuLayer.setZIndex(500);
+	map.addLayer(utmPointLayer);
+	var hasHash = location.hash;
+	permalinkControl = new OpenLayers.Control.Permalink({anchor: true});
+	map.addControl(permalinkControl);
+	if(!hasHash){
+		if(initCX == 0 && initCY == 0) {setInitialRect();}
+		else {
+			map.setCenter(new OpenLayers.LonLat(initCX,initCY).transform(
+        projection4326,projection900913), initZoomLv);
+		}
+	}
+	gZ18Flag = initZoomLv==18 ? true : false ; /// FIXME
+	if(setmarker!=""){
+		var marker = new OpenLayers.Layer.Markers("Marker");
+		map.addLayer(marker);
+		marker.addMarker(new OpenLayers.Marker(
+      new OpenLayers.LonLat(initCX,initCY).transform(
+        projection4326,projection900913)));
+		flagmarker = 1;
+	}
+	document.getElementById('map').oncontextmenu = function(e){
+		e = e ? e : window.event;
+		if(e.preventDefault){e.preventDefault();} else {return false;}
+	}
+	map.events.register('moveend', map, funcMoveEnd);
+	map.events.register('movestart', map, function(){ clearTimeout(timerID);});
+	map.events.register('changelayer', map, function(){ funcCrosshairs(); });
+	OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
+		defaultHandlerOptions: {
+			'single': true, 'double': true, 'pixelTolerance': 0,
+			'stopSingle': false, 'stopDouble': false
+		},
+		handleRightClicks:true,
+		initialize: function(options) {
+			this.handlerOptions = OpenLayers.Util.extend(
+				{}, this.defaultHandlerOptions
+			);
+			OpenLayers.Control.prototype.initialize.apply(
+				this, arguments
+			);
+			this.handler = new OpenLayers.Handler.Click(
+				this, this.eventMethods, this.handlerOptions
+			);
+		},
+		CLASS_NAME: "OpenLayers.Control.Click"
+	});
+	OpenLayers.Control.Keyboard = OpenLayers.Class(OpenLayers.Control, {
+		defaultHandlerOptions: {'keypress': true},
+		initialize: function(options) {
+			this.handlerOptions = OpenLayers.Util.extend(
+				{}, this.defaultHandlerOptions
+			);
+			OpenLayers.Control.prototype.initialize.apply(
+				this, arguments
+			);
+			this.handler = new OpenLayers.Handler.Keyboard(
+				this, this.eventMethods, this.handlerOptions
+			);
+		},
+		CLASS_NAME: "OpenLayers.Control.Keyboard"
+	});
+	OpenLayers.Popup.MyPopupClass =
+	OpenLayers.Class(OpenLayers.Popup, {
+		'contentDisplayClass': 'myOwnStyleForPopupContent'
+	});
+	mapoClick = new OpenLayers.Control.Click({eventMethods:{
+		'rightclick': onPopup,
+		'click': function(e) {
+			if (e.button == 2) {onPopup(e);} else {
+				closePopup();
+				printsizeselectclose();
+				ConfigMenu.close();
+			}
+		},
+		'dblclick': function(e) {},
+		'dblrightclick': function(e) {}
+	}});
+	map.addControl(mapoClick);
+	mapoClick.activate();
+	var sketchSymbolizers = {
+		"Point": {
+			pointRadius: 4,	graphicName: "square", fillColor: "white",
+			fillOpacity: 1,	strokeWidth: 1,	strokeOpacity: 1,	strokeColor: "#333333"
+		},
+		"Line": {
+			strokeWidth: 3,	strokeOpacity: 1,	strokeColor: "#666666",
+			strokeDashstyle: "dash"
+		},
+		"Polygon": {
+			strokeWidth: 2,	strokeOpacity: 1,	strokeColor: "#666666",
+			fillColor: "white",	fillOpacity: 0.3
+		}
+	};
+	var style = new OpenLayers.Style();
+	style.addRules([new OpenLayers.Rule({symbolizer: sketchSymbolizers})]);
+	var styleMap = new OpenLayers.StyleMap({"default": style});
+	measureControls = {
+		line: new OpenLayers.Control.Measure(
+			OpenLayers.Handler.Path, {
+				persist: true, handlerOptions: {
+					layerOptions: {styleMap: styleMap}
+				}
+			}
+		),
+		polygon: new OpenLayers.Control.Measure(
+			OpenLayers.Handler.Polygon, {
+				persist: true, handlerOptions: {
+					layerOptions: {styleMap: styleMap}
+				}
+			}
+		)
+	};
+	var control;
+	for(var key in measureControls) {
+		control = measureControls[key];
+		control.geodesic = true;
+		control.setImmediate(true);
+		control.events.on({
+			"measure": handleMeasurements,
+			"measurepartial": handleMeasurements
+		});
+		map.addControl(control);
+	}
+	mousecontrol();
+}
+function rollOver(obj){
+	obj.style.backgroundColor = "#ffaa99";
+	obj.style.borderTop = "1px solid #ffddcc";
+	obj.style.borderLeft = "1px solid #ffddcc";
+}
+function rollOut(obj){
+	obj.style.backgroundColor = "#ffeedd";
+	obj.style.borderTop = "1px solid #ffeeee";
+	obj.style.borderLeft = "1px solid #ffeeee";
+}
+function closePopup(){
+	if(popupflag)	{map.removePopup(popup);}
+	closeSubmenu();
+	if(clickmarkflg == 1){
+		map.removeLayer(map.getLayersByName('Markers')[0]);
+		clickmarkflg = 0;
+	}
+}
+function prncenter() {
+  var center = map.getCenter();
+  var center2 = center.transform(projection900913, projection4326);
+  var lat = center2.lat;
+  var lon = center2.lon;
+  var roundMe = 100;
+  if(lon < 0){var lon2 = -1 * lon;} else {lon2 = lon;}
+  if(lat < 0){var lat2 = -1 * lat;} else {lat2 = lat;}
+  if(dmsflag == 1){
+    if(lat < 0 && lon < 0){
+			document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心南緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　西経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+    }else if(lat < 0 && lon >= 0){
+			document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心南緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　東経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+    }else if(lat >= 0 && lon < 0){
+			document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心北緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　西経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+		}else if(lat >= 0 && lon >= 0){
+			document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心北緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　東経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+    }
+  }
+	var temp;
+	var EH = parseInt(lon2, 10);
+	temp = (lon2 - EH) * 60;
+	var EM = temp>=1 ? parseInt(temp, 10) : 0;
+	var ES = (lon2-EH-(EM/60))*3600  ;
+  var ESS = (Math.round(ES*roundMe)/roundMe);
+  if(ESS == 60){ESS = 0; EM = EM + 1;};
+  if(EM == 60){EM = 0; EH = EH + 1;};
+  var NH=parseInt(lat2, 10);
+  temp = (lat2-NH)*60;
+  var NM= temp>=1 ? parseInt(temp, 10) : 0;
+  var NS=(lat2-NH-(NM/60))*3600;
+  var NSS=(Math.round(NS*roundMe)/roundMe);
+  if(NSS==60){NSS=0; NM=NM+1;};
+  if(NM==60){NM=0; NH=NH+1;};
+    var zoom = map.getZoom();
+    lat = lat * 1000000;
+    lat = Math.round(lat) / 1000000;
+    lon = lon * 1000000;
+    lon = Math.round(lon) / 1000000;
+    var html= lat + "," + lon;
+    if(document.getElementById('center')){
+      document.getElementById('center').value = html;
+    }else{
+      document.getElementById('deglon').value = EH;
+    document.getElementById('minlon').value = EM;
+    document.getElementById('seclon').value = ESS;
+    document.getElementById('deglat').value = NH;
+    document.getElementById('minlat').value = NM;
+    document.getElementById('seclat').value = NSS;
+  }
+  if (csModule != null) {
+    csModule.prncenter();
+  }
+}
+function funcMoveEnd() {
+  timerID = setTimeout("prncenter()", 1000);
+  closePopup();
+  if (isReceivePrintData) {
+    var mapinfo = sakuzuModule.createParameter();
+    var lat = String(Math.floor(mapinfo.lat * 1000000) / 1000000);
+    var lon = String(Math.floor(mapinfo.lon * 1000000) / 1000000);
+    var zoom = mapinfo.zoomLevel > 0 ? mapinfo.zoomLevel - 1 : 0;
+    var senddata = {
+      "mode": "lonlat_toParent", "lon": lon, "lat": lat, "z": zoom
+    };
+    var jsondata = JSON.stringify(senddata);
+    parent.postMessage(jsondata, "*");
+  }
+}
+function showObject(elm,type){
+  var str = '「' + typeof elm + "」の中身";
+  var cnt = 0;
+  for(i in elm){
+    if(type == 'html'){
+      str += '<br />\n' + "[" + cnt + "] " + i.bold() + ' = ' + elm[i];
+    } else {
+      str += '\n' + "[" + cnt + "] " + i + ' = ' + elm[i];
+    }
+    cnt++;
+    status = cnt;
+  }
+  return str;
+}
+function arrange() {
+  var obj = window;
+  if( window.opera ) {
+    var w = obj.innerWidth;
+    var h = obj.innerHeight;
+  } else if( document.all ){
+    var w = obj.document.documentElement.clientWidth;
+    var h = obj.document.documentElement.clientHeight;
+  } else if( document.getElementById ){
+    var w = obj.innerWidth;
+    var h = obj.innerHeight;
+  }
+  if (!fullscreenMode) {
+    var header_style = document.getElementById("header").style;
+    header_style.position = "absolute";
+    header_style.left = 0 + "px";
+    header_style.top = 0 + "px";
+    header_style.width = w + "px";
+    header_style.height = 55 + "px";
+    header_style.overflow = "hidden";
+    var left_style = document.getElementById("Left").style;
+    left_style.position = "absolute";
+    left_style.left = 0 + "px";
+    left_style.top = 57 + "px";
+    left_style.width = 300 + "px";
+    left_style.height = (h - 57) + "px";
+    left_style.overflow = "hidden";
+    var map_style = document.getElementById("map").style;
+    map_style.position = "absolute";
+    map_style.left = 302 + "px";
+    map_style.top = 57 + "px";
+    map_style.width = ( w - 302 ) + "px";
+    map_style.height = ( h - 57 ) + "px";
+    map_style.overflow = "hidden";
+    map_style.border = "none";
+  } else {
+    header_style = document.getElementById("header").style;
+    header_style.position = "absolute";
+    header_style.left = 0 + "px";
+    header_style.top = 0 + "px";
+    header_style.width = 0 + "px";
+    header_style.height = 0 + "px";
+    header_style.overflow = "hidden";
+    left_style = document.getElementById("Left").style;
+    left_style.position = "absolute";
+    left_style.left = 0 + "px";
+    left_style.top = 0 + "px";
+    left_style.width = 0 + "px";
+    left_style.height = 0 + "px";
+    left_style.overflow = "hidden";
+    map_style = document.getElementById("map").style;
+    map_style.position = "absolute";
+    map_style.left = 0 + "px";
+    map_style.top = 0 + "px";
+    map_style.width = w + "px";
+    map_style.height = h + "px";
+    map_style.overflow = "hidden";
+    map_style.border = "none";
+  }
+  closePopup();
+}
+function arrange2() {
+  if( sakuzuModule.CurrentMode != "none"){
+    return false;
+  }
+  var obj = window;
+  if(window.opera) {
+    var w = obj.innerWidth;
+    var h = obj.innerHeight;
+  } else if(document.all){
+    var w = obj.document.documentElement.clientWidth;
+    var h = obj.document.documentElement.clientHeight;
+  } else if(document.getElementById){
+    var w = obj.innerWidth;
+    var h = obj.innerHeight;
+  }
+  var header_style = document.getElementById("header").style;
+  header_style.position = "absolute";
+  header_style.left = 0 + "px";
+  header_style.top = 0 + "px";
+  header_style.width = w + "px";
+  header_style.height = 60 + "px";
+  header_style.overflow = "hidden";
+  var left_style = document.getElementById("Left").style;
+  left_style.position = "absolute";
+  left_style.left = 0 + "px";
+  left_style.top = 62 + "px";
+  left_style.width = 300 + "px";
+  left_style.height = (h - 62) + "px";
+  left_style.overflow = "hidden";
+  var map_style = document.getElementById("map").style;
+  map_style.position = "absolute";
+  map_style.left = 302 + "px";
+  map_style.top = 62 + "px";
+  map_style.width = ( w - 302 ) + "px";
+  map_style.height = ( h - 62 ) + "px";
+  map_style.overflow = "hidden";
+  map.removeControl(shrinkcontrol);
+  printsizeselectclose();
+  clickmapclosefloating();
+  closePopup();
+  map.updateSize();
+  sakuzuModule.disablePopupLayer();
+  sakuzuModule.enablePopupLayer();
+  if(!dispFlg){sakuzuModule.disablePopupLayer();}
+  sakuzuModule.updateDrawControls();
+  fullscreenMode = false;
+}
+function styleSetting() {
+  if (printMapFlg == 0){arrange();} else {arrange_print();}
+}
+function fullscreen(){
+  if( sakuzuModule.CurrentMode != "none"){return false;}
+  var obj = window;
+  if( window.opera ) {
+    var w = obj.innerWidth;
+    var h = obj.innerHeight;
+  } else if( document.all ){
+    var w = obj.document.documentElement.clientWidth;
+    var h = obj.document.documentElement.clientHeight;
+  } else if( document.getElementById ){    //n6-7, m1, s1
+    var w = obj.innerWidth;
+    var h = obj.innerHeight;
+  }
+  header_style = document.getElementById("header").style;
+  header_style.position = "absolute";
+  header_style.left = 0 + "px";
+  header_style.top = 0 + "px";
+  header_style.width = 0 + "px";
+  header_style.height = 0 + "px";
+  header_style.overflow = "hidden";
+  left_style = document.getElementById("Left").style;
+  left_style.position = "absolute";
+  left_style.left = 0 + "px";
+  left_style.top = 0 + "px";
+  left_style.width = 0 + "px";
+  left_style.height = 0 + "px";
+  left_style.overflow = "hidden";
+  map_style = document.getElementById("map").style;
+  map_style.position = "absolute";
+  map_style.left = 0 + "px";
+  map_style.top = 0 + "px";
+  map_style.width = w + "px";
+  map_style.height = h + "px";
+  map_style.overflow = "hidden";
+  fullscreenMode = true;
+  if (!isIframe && !checkMT()){
+    shrinkcontrol = new webtis.Control.ShrinkMap();
+    map.addControl(shrinkcontrol);
+  }
+  printsizeselectclose();
+  $("#config_cs").animate({height: "hide", opacity: "toggle"},500);
+  clickmapclosefloating();
+  closePopup();
+  map.updateSize();
+  sakuzuModule.enablePopupLayer();
+}
+
+function moveto() {
+  if(document.getElementById('center')){
+    var center = document.getElementById("center").value;
+    if(center) {
+      if(center.substring(2, 3).match(/^[A-Z]/)){
+        var utmValue;
+        var mark;
+        var newMgrs;
+        var pointX;
+        var pointY;
+        mark = center.substring(2,3);
+        newMgrs = center.substring(3,5);
+        pointX = center.substring(5,9);
+        pointY = center.substring(9,13);
+        $.ajax({
+          url: 'site/mapuse4/grid/mgrsXY.php?mgrs=' + newMgrs + '&mark=' + mark,
+          type: 'GET',
+          dataType: 'jsonp',
+          success: function(data) {
+            var topX = data.topX;
+            var topY = data.topY;
+            var utmZone = data.utmZone;
+            pointX = (pointX * 10) + (topX * 100000);
+            pointY = (pointY * 10) + (topY * 100000);
+            var wsPoint = new OpenLayers.Geometry.Point(pointX, pointY);
+            var projUTM = null;
+            if(utmZone==51)  {
+              projUTM = new OpenLayers.Projection('EPSG:3097');
+            }else if(utmZone==52)  {
+              projUTM = new OpenLayers.Projection('EPSG:3098');
+            }else if(utmZone==53)  {
+              projUTM = new OpenLayers.Projection('EPSG:3099');
+            }else if(utmZone==54)  {
+              projUTM = new OpenLayers.Projection('EPSG:3100');
+            }else if(utmZone==55)  {
+              projUTM = new OpenLayers.Projection('EPSG:3101');
+            }else if(utmZone==56)  {
+              projUTM = new OpenLayers.Projection('SR-ORG:1235');
+            }else{
+              projUTM = null;
+            }
+            var wsTrmPoint = wsPoint.transform(projUTM,projection900913);
+            map.setCenter(new OpenLayers.LonLat(wsTrmPoint.x, wsTrmPoint.y), 15);
+            var lonlatPoint = wsTrmPoint.transform(projection900913, projection4326);
+            utmPointDraw(lonlatPoint.x, lonlatPoint.y);
+          }
+        });
+        return false;
+      } else {
+        lonlat = center.split(",");
+        lat = Number(lonlat[0]);
+        lon = Number(lonlat[1]);
+        zoom = 15;
+        map.setCenter(new OpenLayers.LonLat(lon,lat).transform(projection4326,projection900913), zoom);
+        return false;
+      }
+    }
+  }else{
+    var EH = Number(document.getElementById("deglon").value);
+    var EN = Number(document.getElementById("minlon").value);
+    var ESS = Number(document.getElementById("seclon").value);
+    var NH = Number(document.getElementById("deglat").value);
+    var NN = Number(document.getElementById("minlat").value);
+    var NSS = Number(document.getElementById("seclat").value);
+    var lon = EH + EN/60.0 + ESS/3600.0;
+    var lat = NH + NN/60.0 + NSS/3600.0;
+    var center=map.getCenter();
+    var center2=center.transform(projection900913,projection4326);
+    var lat2 = center2.lat;
+    var lon2 = center2.lon;
+    if(lat2 < 0){lat = lat * -1;}
+    if(lon2 < 0){lon = lon * -1;}
+    var zoom = 15;
+    map.setCenter(new OpenLayers.LonLat(lon,lat).transform(projection4326,projection900913), zoom);
+    return false;
+  }
+}
+
+function mapsearch() {csModule.executeSearch("autoMove");}
+
+function moveto2(lon,lat) {
+  map.setCenter(new OpenLayers.LonLat(lon,lat).transform(projection4326,projection900913), 10);
+  if(flagmarker == 1){
+  map.removeLayer(map.getLayersByName('Marker')[0]);
+  }
+  var marker = new OpenLayers.Layer.Markers("Marker");
+  map.addLayer(marker);
+  marker.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lon,lat).transform(projection4326,projection900913)));
+  flagmarker = 1;
+}
+
+function mousecontrol() {
+  map.events.register('mousemove', map, function(e){
+  var zoomber_x1;
+  var zoomber_x2;
+  var zoomber_y1;
+  var zoomber_y2;
+  var button_x1;
+  var button_x2;
+  var button_y1;
+  var button_y2;
+
+  if (printMapFlg == 0) {
+    var mouseX = getMousePosition(e).x;
+    var mouseY = getMousePosition(e).y;
+    var obj = window;
+    if( window.opera ) {
+        var w = obj.innerWidth;
+      } else if( document.all ){
+        var w = obj.document.documentElement.clientWidth;
+      } else if( document.getElementById ){
+        var w = obj.innerWidth;
+      }
+      button_x1 = w - 7 - 74;
+      button_x2 = w - 7;
+      if(!fullscreenMode){
+        zoomber_x1 = 319;
+        zoomber_x2 = 335;
+        zoomber_y1 = 129;
+        zoomber_y2 = 361;
+        button_y1 = 67;
+        button_y2 = 67 + 32;
+      }else{
+        zoomber_x1 = 19;
+        zoomber_x2 = 35;
+        zoomber_y1 = 79;
+        zoomber_y2 = 311;
+        button_y1 = 10;
+        button_y2 = 10 + 32;
+      }
+      if( mouseX >= button_x1 && mouseX <= button_x2 && mouseY >= button_y1 && mouseY <= button_y2 && mapSelectFlg == 0 && offonflg == 0)
+      {
+        var top = button_y2;
+        clickmapfloating(top);
+        offonflg = 1;
+        printsizeselectclose();
+      } else if(
+          ( mouseX >= button_x1 && mouseX <= button_x2 && mouseY >= button_y1 && mouseY <= button_y2 && mapSelectFlg == 1)
+          ||
+
+          ( mouseX >= button_x2-380 && mouseX <= button_x2 && mouseY >= button_y2 && mouseY <= button_y2+350 && mapSelectFlg == 1 )
+          )
+
+
+        {
+      }
+      else if( mapSelectFlg == 1){
+        clickmapclosefloating();
+      }
+      else if( mapSelectFlg == 0){
+        offonflg = 0;
+      }
+      else{
+
+      }
+    }
+  });
+}
+
+function getMousePosition(e) {
+  var obj = new Object();
+  if(document.all) {
+    obj.x = window.event.clientX + document.body.scrollLeft;
+    obj.y = window.event.clientY + document.body.scrollTop;
+  }
+  else {
+    obj.x = e.pageX;
+    obj.y = e.pageY;
+  }
+  return obj;
+}
+function funcCrosshairs()  {
+  if(map)  {
+    if (centercross) {
+      removeScaleCross(); createScaleCross();
+    } else {
+      return false;
+    }
+  }
+}
+
+function funcCrosshairs2() {
+  if (!document.getElementById('centercross').checked) {
+    removeScaleCross();
+  } else {
+    createScaleCross();
+  }
+}
+
+function funcClickMark(lon, lat) {
+  if(clickmarkflg == 1){
+    map.removeLayer(map.getLayersByName('Markers')[0]);
+  }
+  mapMeta = webtisMap.getCurrentMetaData();
+  source = showObject(mapMeta);
+  pos = source.indexOf("dataId");
+  if(pos) {
+    var markers = new OpenLayers.Layer.Markers( "Markers" );
+    map.addLayer(markers);
+    var size = new OpenLayers.Size(12,12);
+    var offset = new OpenLayers.Pixel(-(size.w/2), -(size.h/2));
+    dataidst = pos + 9;
+    dataiden = dataidst + 5;
+    str = source.substring(dataidst,dataiden);
+    if (str == "NLII1" || str == "NLII2" || str == "NLII3" || str == "NLII4" || str == "DJBMO" || str == "TOHO2"){
+      var icon = new OpenLayers.Icon('http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/clickmarkWH.png',size,offset);
+    }
+    else{
+      var icon = new OpenLayers.Icon('http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/clickmarkBL.png',size,offset);
+    }
+
+    markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(lon,lat),icon));
+    //markers.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(0,0),icon.clone()));
+  }
+  clickmarkflg = 1;
+}
+function keepseries(form) {
+  if(form.series[1].checked){
+    document.getElementById('seriestext').value = form.series[1].value;
+  }else{
+    document.getElementById('seriestext').value = null;
+  }
+}
+function sleep(time){
+  var d1 = new Date().getTime();
+  var d2 = new Date().getTime();
+  while(d2 < d1 + time){
+    d2 = new Date().getTime();
+  }
+  return;
+}
+function handleMeasurements(event) {
+  var geometry = event.geometry;
+  var units = event.units;
+  var order = event.order;
+  var measure = event.measure;
+  var element = window.document.getElementById('output');
+  var out = "";
+  if(order == 1) {
+    out += measure.toFixed(3) + " " + units;
+  } else {
+    out += measure.toFixed(3) + " " + units + "<sup>2</" + "sup>";
+  }
+  element.innerHTML = out;
+}
+function toggleControl(element) {
+  if(!window.mapfloat3)  {
+    for(key in measureControls) {
+      var control = measureControls[key];
+      if(element.value == key) {
+        control.activate();
+      } else {
+        control.deactivate();
+      }
+    }
+  }
+}
+function openMeasure(element)  {
+  if (!document.getElementById("img_measure").disabled){
+    for(key in measureControls) {
+      var control = measureControls[key];
+      if(key == "line")  {
+        control.activate();
+      }else{
+        control.deactivate();
+      }
+    }
+    document.getElementById('showimage').style.display="block";
+    mapoClick.deactivate();
+    printsizeselectclose();
+    clickmapclosefloating();
+    closePopup();
+    changeDisable("img_measure", true);
+    changeDisable("img_allow_open", true);
+    changeDisable("img_printer", true);
+    changeDisable("img_sakuzu", true);
+    document.onmousemove=null;
+  }
+}
+function closeMeasure(element)  {
+  toggleControl(element);
+  document.getElementById('lineToggle').checked = true;
+  document.getElementById('output').innerHTML = "";
+  document.getElementById('showimage').style.display="none";
+  mapoClick.activate();
+  changeDisable("img_measure", false);
+  changeDisable("img_allow_open", false);
+  changeDisable("img_printer", false);
+  changeDisable("img_sakuzu", false);
+  mousecontrol();
+}
+function ddmmss(){
+  var center=map.getCenter();
+    var center2=center.transform(projection900913,projection4326);
+    var lat = center2.lat;
+    var lon = center2.lon;
+    document.getElementById('centerform').innerHTML = "";
+    if(lat < 0 && lon < 0){
+    document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心南緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　西経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+  }else if(lat < 0 && lon >= 0){
+    document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心南緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　東経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+  }else if(lat >= 0 && lon < 0){
+    document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心北緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　西経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+  }else if(lat >= 0 && lon >= 0){
+    document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="2">中心北緯</font> <input type="text" size="2" id="deglat" name="deglat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">度</font><input type="text" size="2" id="minlat" name="minlat" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclat" name="seclat" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒　東経</font> <input type="text" size="3" id="deglon" name="deglon" style="font-weight:500;font-size:15px;width:30px;"><font size="2">度</font><input type="text" size="2" id="minlon" name="minlon" style="font-weight:500;font-size:15px;width:20px;"><font size="2">分</font><input type="text" size="4" id="seclon" name="seclon" style="font-weight:500;font-size:15px;width:45px;"><font size="2">秒</font><input type="button" value="移動" onclick="moveto()"><input type="button" value="十進" onclick="ddd()"></form><div id="outText"></div>';
+  };
+  dmsflag = 1
+  prncenter();
+}
+function ddd(){
+  document.getElementById('centerform').innerHTML = "";
+  document.getElementById('centerform').innerHTML = '<form action="index.html" onsubmit="return moveto()"><font size="3">中心緯度経度：</font> <input type="text" id="center" name="center" size="21" style="padding-left:5px;font-weight:500;font-size:15px;border:2px #6495ED solid;width:190px;"> <input type="button" value="移動" onclick="moveto()"><input type="button" value="度分秒" onclick="ddmmss()"></form><div id="outText"></div>';
+  dmsflag = 0;
+  prncenter();
+}
+
+function changeMode(){
+  if (document.getElementById("disppopup").checked){
+    if(dispFlg){
+      sakuzuModule.disablePopupLayer();
+      dispFlg = false;
+    } else{
+      sakuzuModule.enablePopupLayer();
+      dispFlg = true;
+    }
+    sakuzuModule.updateDrawControls();
+  }
+  else{
+    if(dispFlg){
+      sakuzuModule.disablePopupLayer();
+      dispFlg = false;
+    } else{
+      sakuzuModule.enablePopupLayer();
+    }
+    sakuzuModule.updateDrawControls();
+  }
+}
+
+function changeDisable(id, value){
+  var element = document.getElementById(id);
+  if (element) element.disabled = value;
+}
+
+function checkMT() {
+  if (isNoMT) {
+    return false;
+  }
+  return (isMob || isTab)
+}
+//-->
+</script>
+<script type="text/javascript"><!--
+var ns4=document.layers;
+var ie4=document.all;
+var ns6=document.getElementById&&!document.all;
+
+var dragswitch=0;
+var nsx;
+var nsy;
+var nstemp;
+
+function drag_dropns(name){
+  if (!ns4)
+    return;
+  temp=eval(name);
+  temp.captureEvents(Event.MOUSEDOWN | Event.MOUSEUP);
+  temp.onmousedown=gons;
+  temp.onmousemove=dragns;
+  temp.onmouseup=stopns;
+}
+
+function gons(e){
+  temp.captureEvents(Event.MOUSEMOVE);
+  nsx=e.x;
+  nsy=e.y;
+}
+
+function dragns(e){
+  if (dragswitch==1){
+    temp.moveBy(e.x-nsx,e.y-nsy);
+    return false;
+  }
+}
+
+function stopns(){
+  temp.releaseEvents(Event.MOUSEMOVE);
+}
+
+function drag_drop(e){
+  if (ie4&&dragapproved){
+    crossobj.style.left=tempx+event.clientX-offsetx;
+    crossobj.style.top=tempy+event.clientY-offsety;
+    return false;
+  }
+  else if (ns6&&dragapproved){
+    crossobj.style.left=tempx+e.clientX-offsetx+"px";
+    crossobj.style.top=tempy+e.clientY-offsety+"px";
+    return false;
+  }
+}
+
+function initializedrag(e){
+  crossobj=ns6? document.getElementById("showimage") : document.all.showimage;
+  var firedobj=ns6? e.target : event.srcElement;
+  var topelement=ns6? "html" : document.compatMode && document.compatMode!="BackCompat"? "documentElement" : "body";
+  while (firedobj.tagName!=topelement.toUpperCase() && firedobj.id!="dragbar"){
+    firedobj=ns6? firedobj.parentNode : firedobj.parentElement;
+  }
+
+  if (firedobj.id=="dragbar"){
+    offsetx=ie4? event.clientX : e.clientX;
+    offsety=ie4? event.clientY : e.clientY;
+
+    tempx=parseInt(crossobj.style.left, 10);
+    tempy=parseInt(crossobj.style.top, 10);
+
+    dragapproved=true;
+    document.onmousemove=drag_drop;
+  }
+}
+document.onmouseup=new Function("dragapproved=false");
+function hidebox(){
+  crossobj=ns6? document.getElementById("showimage") : document.all.showimage;
+  if (ie4||ns6)
+    crossobj.style.visibility="hidden";
+  else if (ns4)
+    document.showimage.visibility="hide";
+}
+
+function initializedragS(e){
+  crossobj = document.getElementById("sakuzuPalette");
+  tempx=parseInt(crossobj.style.left, 10);
+  tempy=parseInt(crossobj.style.top, 10);
+  offsetx=e.clientX-tempx;
+  offsety=e.clientY-tempy;
+  document.onmousemove=drag_dropP;
+}
+
+function initializedragP(e){
+  crossobj=document.getElementById("sakuzuPanel");
+  tempx=parseInt(crossobj.style.left, 10);
+  tempy=parseInt(crossobj.style.top, 10);
+  offsetx=e.clientX-tempx;
+  offsety=e.clientY-tempy;
+  document.onmousemove=drag_dropP;
+  return false;
+}
+
+function drag_dropP(e){
+  var x = ie4? event.clientX : e.clientX;
+  var y = ie4? event.clientY : e.clientY;
+  crossobj.style.left=x-offsetx+"px";
+  crossobj.style.top=y-offsety+"px";
+  return false;
+}
+
+function terminatedrag(e){
+  document.onmousemove=null;
+}
+function getLonLatValue(lonlat){
+  var result = {
+    EEE: "",
+    NNN: "",
+    lon: 0,
+    lat: 0
+  };
+  lonlat2 = new OpenLayers.LonLat(lonlat.lon,lonlat.lat).transform(projection900913,projection4326);
+  var lon4 = lonlat2.lon;
+  var lat4 = lonlat2.lat;
+  if(lon4 < 0){
+    var lon5 = -1 * lon4;
+    var keido = "西経";
+  }else{
+    lon5 = lon4;
+    keido = "東経"
+  }
+  if(lat4 < 0){
+    var lat5 = -1 * lat4;
+    var ido = "南緯";
+  }else{
+    lat5 = lat4;
+    ido = "北緯";
+  }
+
+  var roundMe=100;
+  EH=parseInt(lon5, 10);
+  EM=parseInt((lon5-EH)*60, 10);
+  ES=(lon5-EH-(EM/60))*3600  ;
+  ESS=(Math.round(ES*roundMe)/roundMe);
+  if(ESS==60){ESS=0; EM=EM+1;};
+  if(EM==60){EM=0; EH=EH+1;};
+  EEE=(EH+'度'+EM+'分'+ESS+'秒');
+  NH=parseInt(lat5, 10);
+  NM=parseInt((lat5-NH)*60, 10);
+  NS=(lat5-NH-(NM/60))*3600;
+  NSS=(Math.round(NS*roundMe)/roundMe);
+  if(NSS==60){NSS=0; NM=NM+1;};
+  if(NM==60){NM=0; NH=NH+1;};
+  NNN=(NH+'度'+NM+'分'+NSS+'秒');
+  lon4 = lon4 * 1000000;
+  lon4 = parseInt(lon4, 10);
+  lon4 = lon4 / 1000000;
+  lat4 = lat4 * 1000000;
+  lat4 = parseInt(lat4, 10);
+  lat4 = lat4 / 1000000;
+  getAltitude(lon4,lat4);
+  result.EEE = EEE;
+  result.NNN = NNN;
+  result.lonlat = lat4 + "," + lon4;
+  result.lon = lon4;
+  result.lat = lat4;
+  return result;
+}
+
+function getAltitude(px,py)  {
+  var urlstr = "http://cyberjapandata.gsi.go.jp/cgi-bin/getelevation.php?lon=" + px + "&lat=" + py;
+  $.ajax({
+    dataType: "jsonp", url: urlstr,
+    success: function (data) {
+      var outPutHeight = data.elevation + "m（" + data.hsrc + "）";
+      if (document.getElementById("altitudeResult")){
+        document.getElementById("altitudeResult").innerHTML=outPutHeight;
+      }
+    }
+  });
+}
+function removeScaleCross(){
+  if (crosshairs) {
+    map.removeControl(crosshairs);
+  }
+  crosshairs = null;
+}
+function createScaleCross() {
+  mapMeta = webtisMap.getCurrentMetaData();
+  source = showObject(mapMeta);
+  pos = source.indexOf("dataId");
+  if(pos) {
+    dataidst = pos + 9;
+    dataiden = dataidst + 5;
+    str = source.substring(dataidst,dataiden);
+
+    var isWhite = (str == "NLII1" || str == "NLII2" || str == "NLII3" || str == "NLII4" || str == "DJBMO" || str == "TOHO2");
+
+    if (crosshairs == null) {
+      crosshairs = new OpenLayers.Control.CenterCross({
+        isWhite: isWhite,
+        defaultHandlerOptions: {
+          'single': true, 'double': false, 'pixelTolerance': 0,
+          'stopSingle': false, 'stopDouble': false
+        }
+      });
+      map.addControl(crosshairs);
+      crosshairs.activate();
+
+      OpenLayers.Event.observe(crosshairs.horizontal, "mousedown",
+        OpenLayers.Function.bindAsEventListener(
+          function(e) {
+            if(!OpenLayers.Event.isLeftClick(e)){
+              e.xy = new OpenLayers.Pixel(e.clientX - this.map.div.offsetLeft,
+                            e.clientY - this.map.div.offsetTop);
+              onPopup(e);
+            }
+          }, this));
+
+      OpenLayers.Event.observe(crosshairs.vertical, "mousedown",
+        OpenLayers.Function.bindAsEventListener(
+          function(e) {
+            if(!OpenLayers.Event.isLeftClick(e)){
+              e.xy = new OpenLayers.Pixel(e.clientX - this.map.div.offsetLeft,
+                            e.clientY - this.map.div.offsetTop);
+              onPopup(e);
+            }
+          }, this));
+    }
+    else {
+      crosshairs.isWhite = isWhite;
+    }
+  }
+  return false;
+}
+
+onPopup = function(e) {
+  var lonlat = map.getLonLatFromViewPortPx(e.xy);
+  var lon1 = lonlat.lon;
+  var lat1 = lonlat.lat;
+  result = getLonLatValue(lonlat);
+  var zumei = check_zuyou_list(result.lon, result.lat);
+  var zlist="";
+  for(var key in zumei)  {
+    zlist = zlist + zumei[key][0] + " , ";
+  }
+  zlist = zlist.substring(0,zlist.length-2);
+  closePopup();
+  clickmapclosefloating();
+  printsizeselectclose();
+  funcClickMark(lon1,lat1);
+  var posw = e.clientX + 226;
+  var posh = e.clientY + 133;
+  var stylesheet = "";
+  stylesheet += "padding:3px 0px 2px 5px;";
+  stylesheet += "border-top:1px solid #ffeeee;";
+  stylesheet += "border-right:1px solid maroon;";
+  stylesheet += "border-bottom:1px solid maroon;";
+  stylesheet += "border-left:1px solid #ffeeee;' ";
+  var liststyle1 = " colspan='2' style='width:280px;background-color:#ffeedd;font-size:13px;" + stylesheet;
+  var liststyle2 = " style='width:140px;background-color:#ffeedd;font-size:13px;" + stylesheet;
+  var liststyle3 = " style='width:140px;background-color:#ffeedd;font-size:13px;color:#c0c0c0;" + stylesheet;
+  var onmouse = "";
+  onmouse += " onMouseOver='window.parent.rollOver(this);' onMouseOut='window.parent.rollOut(this);' ";
+  var onmouse1 = "";
+  onmouse1 += " onMouseOver='window.parent.rollOver(this);window.parent.mapLink("+lon1+","+lat1+","+posw+","+posh+");' onMouseOut='window.parent.rollOut(this);window.parent.displayMode(0);'";
+  var popupText = "";
+  popupText += "<TABLE border=1 cellspacing=0 cellpadding=3 valign='center'>";
+  popupText += "<TR><TD " + liststyle1 + ">";
+  popupText += "住所: <span id='popupAddress'>---</span><br>";
+  popupText += "（付近の住所。正確な所属を示すとは限らない。）<br>";
+  popupText += "緯度: " + result.NNN + "<BR>";
+  popupText += "経度: " + result.EEE + "<BR>";
+  popupText += "十進表記: " + result.lonlat + "<BR>";
+  popupText += "標高: <span id='altitudeResult'></span><br>";
+  popupText += "2万5千分1地形図名: " + zlist;
+  popupText += "</TD></TR>";
+  popupText += "</table>";
+  popupText += "<div id='popup_clipboard' style='font-size:13px;'>";
+  popupText += "緯度経度をクリップボードにコピー";
+  popupText += "</div>";
+  popupText += "<TABLE border=1 cellspacing=0 cellpadding=3 valign='center'>";
+  popupText += "<TR><TD colspan='2' " + liststyle1 + ">";
+  popupText += "   <a "
+    + " onclick='open3d("+result.lon
+    +  ","
+    +  result.lat+","
+    +  map.getZoom()
+    +  ");window.parent.closePopup();;'>"
+    +  '<span style="cursor:pointer"><FONT color="#00c"><u>地理院地図3Dで開く</u></FONT></span></a>'
+    + "<FONT size='-1'>  (<a target='_blank' href='http://cyberjapandata.gsi.go.jp/3d/index.html' "
+    + " >使い方</a>)</FONT></TD></TR>";
+  popupText += "<TR><TD colspan='2' " + liststyle1 + ">";
+  popupText += "他のWeb地図で見る: <a href='#' onclick='openMapLinkPos(LinkKey.Mapion,"+lon1+","+lat1+");return false;'>マピオン</a> / <a href='#' onclick='openMapLinkPos(LinkKey.ItsumoNavi,"+lon1+","+lat1+");return false;'>いつもNAVI</a></TD></TR>";
+  if (20 <= result.lat && result.lat <= 46 && 122 <= result.lon && result.lon <= 154) {
+    popupText += "<TR><TD " + liststyle2 + onmouse + " onclick='window.parent.JihokuLineDraw("+lon1+","+lat1+");window.parent.closePopup();'>";
+    popupText += "磁北線の表示</TD>";
+  }
+  else {
+    popupText += "<TR><TD " + liststyle3 + ">";
+    popupText += "磁北線の表示</TD>";
+  }
+
+  popupText += "<TD " + liststyle2 + onmouse + " onclick='window.parent.JihokuLineClear();window.parent.closePopup();'>";
+  popupText += "磁北線の非表示</TD></TR>";
+
+  var zoom = map.getZoom();
+  if((zoom>=8)&&(result.lon>=120)&&(result.lon<156)&&(result.lat>=0)) {
+    popupText += "<TR><TD " + liststyle2 + onmouse + " onclick='window.parent.utmPointDraw("+result.lon+","+result.lat+");'>";
+    popupText += "UTMポイントの表示</TD>";
+    popupText += "<TD " + liststyle2 + onmouse + " onclick='window.parent.utmPointClear();'>";
+    popupText += "UTMポイントの非表示</TD></TR>";
+  } else {
+    popupText += "<TR><TD " + liststyle3 + ">";
+    popupText += "UTMポイントの表示</TD>";
+    popupText += "<TD " + liststyle3 + ">";
+    popupText += "UTMポイントの非表示</TD></TR>";
+  }
+
+  if((zoom>=10)&&(result.lon>=120)&&(result.lon<156)&&(result.lat>=0)) {
+    popupText += "<TR><TD " + liststyle2 + onmouse + " onclick='window.parent.utmGridDraw();'>";
+    popupText += "UTMグリッドの表示</TD>";
+    popupText += "<TD " + liststyle2 + onmouse + " onclick='window.parent.utmGridClear();'>";
+    popupText += "UTMグリッドの非表示</TD></TR>";
+  } else {
+    popupText += "<TR><TD " + liststyle3 + ">";
+    popupText += "UTMグリッドの表示</TD>";
+    popupText += "<TD " + liststyle3 + ">";
+    popupText += "UTMグリッドの非表示</TD></TR>";
+  }
+
+  if((zoom==12)&&(result.lon>=120)&&(result.lon<156)&&(result.lat>=0)) {
+    popupText += "<TR><TD " + liststyle2 + ">";
+    popupText += "経緯度グリッドの表示<BR />(";
+    popupText += "<a href='javascript:void(0);' onclick='window.parent.lonlatGridDraw(60);'>1分</a>";
+    popupText += "|<FONT style='text-decoration:underline;'>30秒</FONT>";
+    popupText += "|<FONT style='text-decoration:underline;'>15秒</FONT>";
+    popupText += ")</TD>";
+    popupText += "<TD " + liststyle2 + onmouse + " onclick='window.parent.lonlatGridClear();'>";
+    popupText += "経緯度グリッドの非表示</TD></TR>";
+  } else if ((zoom==13)&&(result.lon>=120)&&(result.lon<156)&&(result.lat>=0)){
+    popupText += "<TR><TD " + liststyle2 + ">";
+    popupText += "経緯度グリッドの表示<BR />(";
+    popupText += "<a href='javascript:void(0);' onclick='window.parent.lonlatGridDraw(60);'>1分</a>";
+    popupText += "|<a href='javascript:void(0);' onclick='window.parent.lonlatGridDraw(30);'>30秒</a>";
+    popupText += "|<FONT style='text-decoration:underline;'>15秒</FONT>";
+    popupText += ")</TD>";
+    popupText += "<TD " + liststyle2 + onmouse + " onclick='window.parent.lonlatGridClear();'>";
+    popupText += "経緯度グリッドの非表示</TD></TR>";
+  } else if ((zoom>=14)&&(result.lon>=120)&&(result.lon<156)&&(result.lat>=0)) {
+    popupText += "<TR><TD " + liststyle2 + ">";
+    popupText += "経緯度グリッドの表示<BR />(";
+    popupText += "<a href='javascript:void(0);' onclick='window.parent.lonlatGridDraw(60);'>1分</a>";
+    popupText += "|<a href='javascript:void(0);' onclick='window.parent.lonlatGridDraw(30);'>30秒</a>";
+    popupText += "|<a href='javascript:void(0);' onclick='window.parent.lonlatGridDraw(15);'>15秒</a>";
+    popupText += ")</TD>";
+    popupText += "<TD " + liststyle2 + onmouse + " onclick='window.parent.lonlatGridClear();'>";
+    popupText += "経緯度グリッドの非表示</TD></TR>";
+  } else {
+    popupText += "<TR><TD " + liststyle3 + ">";
+    popupText += "経緯度グリッドの表示<BR />(";
+    popupText += "<FONT style='text-decoration:underline;'>1分</FONT>";
+    popupText += "|<FONT style='text-decoration:underline;'>30秒</FONT>";
+    popupText += "|<FONT style='text-decoration:underline;'>15秒</FONT>";
+    popupText += ")</TD>";
+    popupText += "<TD " + liststyle3 + ">";
+    popupText += "経緯度グリッドの非表示</TD></TR>";
+  }
+
+  popupText += "<TR><TD colspan='2' " + liststyle1 + ">";
+  popupText += "  <FONT style='font-size:12px;'><a href='help/howtouse.html#h2-3' style='color:#FF0000' target='_blank'>※注意　右クリックで得られる値等について</a></FONT></TD></TR>";
+  popupText += "</TABLE>";
+
+  var p_lon = lon1 + popupcalc[zoom];
+  var p_lat = lat1 - popupcalc[zoom];
+  var popupSize;
+  popupSize = new OpenLayers.Size(280, 268);
+  popup = new OpenLayers.Popup.MyPopupClass(
+    "PopupMenu",
+    new OpenLayers.LonLat(p_lon,p_lat),
+     popupSize,
+    popupText,
+    false
+  );
+  popup.border = '1px solid black';
+  map.addPopup(popup);
+  $("#popup_clipboard").zclip({
+    path: "js/ZeroClipboard.swf",
+    setHandCursor: false,
+    copy: function(){
+      var str = result.lat + "\t" + result.lon;
+      return str;
+    },
+    beforeCopy:function(){
+      $("#popup_clipboard").css('background','yellow');
+    },
+    afterCopy:function(){
+      closePopup();
+    }
+  });
+  csModule.getAddress(result.lon, result.lat);
+  popupflag = 1;
+}
+
+function setInitialRect() {
+  var bounds = new OpenLayers.Bounds(120.0, 19.0, 157.5, 50.0).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+  map.zoomToExtent(bounds, true);
+}
+
+function toNewParmS(parmString) {
+  var s = "";
+  var obj = {};
+  var lat = "";
+  var lon = "";
+  var parms = parmString.split("&");
+  for(var i = 0; i < parms.length; i++) {
+    var values = parms[i].split("=");
+    if(values[0] == "zoom") {
+      obj.z = values[1];
+    } else if(values[0] == "lat") {
+      lat += values[1];
+    } else if(values[0] == "lon") {
+      lon += values[1];
+    }
+  }
+  if((lat != "") && (lon != "")) {
+    obj.ll = lat + "," + lon;
+  }
+  for(var i in obj) {
+    s += i + "=" + obj[i] + "&";
+  }
+  s = s.substring(0, s.length - 1);
+  return s;
+}
+
+function toNewParmQ(parmString) {
+  var s = "";
+  var obj = {};
+  var lat = "";
+  var lon = "";
+  var lkeys = new Array();
+  var lopas = new Array();
+  var parms = parmString.split("&");
+  for(var i = 0; i < parms.length; i++) {
+    var values = parms[i].split("=");
+    if(values[0] == "lat") {
+      lat += values[1];
+    } else if(values[0] == "lon") {
+      lon += values[1];
+    } else if(values[0] == "z") {
+      obj.z = values[1];
+    } else if(values[0] == "did") {
+      obj.base = values[1];
+    } else if(values[0].match(/^lkey/)) {
+      var index = values[0].substring(4, 5);
+      lkeys[index] = values[1];
+    } else if(values[0].match(/^lopa/)) {
+      var index = values[0].substring(4, 5);
+      lopas[index] = values[1];
+    } else if(values[0] == "crs") {
+      if(values[1] == 0) {
+        obj.vs = "c0";
+      } else {
+        obj.vs = "c1";
+      }
+    }
+  }
+  if((lat != "") && (lon != "")) {
+    obj.ll = lat + "," + lon;
+  }
+  if(lkeys.length) {
+    obj.ls = "";
+    for(var i = 0; i < lkeys.length; i++) {
+      if(lkeys[i] != undefined) {
+        obj.ls += lkeys[i];
+        if(lopas[i] != undefined) {
+          obj.ls += "," + lopas[i];
+        } else {
+          obj.ls += ",1";
+        }
+        obj.ls += "|";
+      }
+    }
+    obj.ls = obj.ls.substring(0, obj.ls.length - 1);
+  }
+  for(var i in obj) {
+    s += i + "=" + obj[i] + "&";
+  }
+  s = s.substring(0, s.length - 1);
+  return s;
+}
+
+function getNewURL(url) {
+  var newUrl = "http://maps.gsi.go.jp/";
+  if(url.indexOf("?") > 0) {
+    var queryUrl = url.substring(url.indexOf("?") + 1, url.length);
+    var s = toNewParmQ(queryUrl);
+    newUrl += "?" + s;
+  } else if(url.indexOf("#") > 0) {
+    var hashUrl = url.substring(url.indexOf("#") + 1, url.length);
+    var s = toNewParmS(hashUrl);
+    newUrl += "?" + s;
+  }
+  return newUrl;
+}
+
+function redirectNewGSIMaps() {
+  var url = getNewURL(window.location.href);
+  window.location.href = url;
+}
+
+function openNewGSIMaps() {
+  var url = getNewURL(sakuzuModule.getUrlSaveString());
+  window.location.href = url;
+}
+//--></script>
+</head>
+<body onresize="styleSetting();funcCrosshairs();">
+  <div id="header" style="display: none;">
+    <div style="display: block">
+      <div style="padding-left: 0px; padding-top: 10px;">
+        <a href="site/mapuse4/"><img src="http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/title05+denkoku2.png"
+          width="238px" height="40px"></a>
+      </div>
+      <div style="position: absolute; top: 5px; left:240px; font-weight:bold;">
+        <font size="3">
+          <a href="javascript:void(0)" onclick="openNewGSIMaps();return false;">新しい地理院地図</a>をお使いください</font>
+      </div>
+
+      <div style="position: absolute; top: 25px; left: 240px;"
+        id="centerform"></div>
+      <div style="position: absolute; top: 5px; right: 10px;">
+        <font size="2"><a
+          href="http://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html"
+          target="_blank">利用規約</a>｜<a
+          href="help/howtouse.html" target="_blank">ヘルプ</a>｜<a
+          href="help/development.html"
+          target="_blank">技術情報</a>｜<a
+          href="https://twitter.com/gsi_cyberjapan" target="_blank">お知らせ（twitter）</a>｜<a
+          href="help/query.html"
+          target="_blank">お問い合わせ</a>｜<a href="http://www.gsi.go.jp/"
+          target="_blank">地理院ホーム</a></font>
+      </div>
+      <div style="position: absolute; top: 32px; right: 10px;">
+        <span id="configButton"></span>
+      </div>
+    </div>
+
+  </div>
+  <div id="printheader" style="display: none;" class="insatu">
+    <div style="padding-left: 30px; padding-top: 8px;">
+      <img src="site/mapuse4/image/title05-.png" width="126px" height="40px">
+    </div>
+    <div style="position: absolute; top: 8px; left: 180px;" class="insatu">
+      <button type="submit" name="" value="code" onclick="mainwindow();"
+        style="font-size: 10px; height: 38px">
+        元の画面<br>に戻る
+      </button>
+    </div>
+    <div
+      style="position: absolute; top: 14px; right: 280px; font-size: 13px;"
+      class="insatu">用紙：</div>
+    <div id="printlink"></div>
+    <div style="position: absolute; top: 10px; right: 0px;">
+      <a href="javascript:window.print();" class="insatu"><img
+        src="http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/insatu.png" width="55px" height="31px" border="0"></a>
+      <a href="help/faq/print01.pdf"
+        target="_blank" class="insatu"
+        style="padding-left: 10px; font-size: 14px;">※留意事項</a>
+    </div>
+  </div>
+  <iframe id="printmapframe" style="display: none;"></iframe>
+  <div id="Left" style="display: none;">
+    <div style="text-align: right;">
+      <a href="javascript:void(0);" class="fullscreen"
+        onclick="fullscreen(); return false;"><img src="http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/nw2.gif"
+        width="20" height="20" alt="地図を全画面表示" title="地図を全画面表示"></a>
+
+    </div>
+    <div class="cs_breadcrumbs" height="20px">
+      <span id="jus"> <span id="cs_level0"><font size=2>全国</font></span>
+      </span>
+    </div>
+
+    <div id="scrolling">
+      <div id="infoTabs" style="border-width: 0px; padding: 0px;">
+        <ul>
+          <li><a href="#fragment-1"><span>地図・空中写真</span></a></li>
+          <li><a href="#fragment-2"><span>基準点・測地観測</span></a></li>
+          <li><a href="#fragment-3"><span>防災関連</span></a></li>
+          <li><a href="#fragment-4"><span>他の機関</span></a></li>
+          <li><a href="#fragment-6"><span>地名等検索</span></a></li>
+        </ul>
+
+        <div id="fragment-1">
+          <div id="mapTab"></div>
+        </div>
+        <div id="fragment-2">
+          <div id="geodeticTab"></div>
+        </div>
+        <div id="fragment-3">
+          <div id="saigaiTab"></div>
+        </div>
+        <div id="fragment-4">
+          <div id="otherTab"></div>
+        </div>
+        <div id="fragment-6">
+          <div id="searchTab"></div>
+        </div>
+
+      </div>
+      <div id="accesscounter" style="clear: both;">
+        <!-- <iframe src="http://portal.cyberjapan.jp/count/count.php?id=014"
+          height="50" width="300" frameborder="0" scrolling="no" align="left"></iframe> -->
+      </div>
+      <div style="text-align: right">
+        <font size="2" color="#555555">since 2013.10.30</font>
+      </div>
+    </div>
+
+  </div>
+  <div id="map" name="map"></div>
+
+  <div id="config_cs" name="config_cs"
+    style="position: absolute; width: 330px; left: 340px; top: 33px; background-color: white; display: none;"></div>
+  <div id="showimage"
+    style="position: absolute; width: 250px; left: 350px; top: 100px; display: none;">
+    <table border="0" width="250" cellspacing="0" cellpadding="2"
+      style="background-color: #ccc">
+      <tr>
+        <td style="width: 100%">
+          <table border="0" cellspacing="0" cellpadding="0"
+            style="width: 100%; height: 36px;">
+            <tr>
+              <td id="dragbar"
+                style="cursor: pointer; width: 100%; border: 1px #000000 solid; padding: 5px;"
+                onmousedown="initializedrag(event)"
+                onmouseup="terminatedrag(event)"><ilayer width="100%"
+                  onselectstart="return false"> <layer width="100%"
+                  onmouseover="dragswitch=1;if (ns4) drag_dropns(showimage)"
+                  onmouseout="dragswitch=0"> <span
+                  style="color: #000000; font-weight: bold;">計測</span> </layer> </ilayer></td>
+            </tr>
+            <tr>
+              <td
+                style="padding: 4px; width: 100%; background-color: White; border: 1px #000000 solid;">
+                <input type="radio" name="type"
+                value="line" id="lineToggle" onclick="toggleControl(this);"
+                checked> <label for="lineToggle">距離</label> <input
+                  type="radio" name="type" value="polygon" id="polygonToggle"
+                  onclick="toggleControl(this);"> <label
+                    for="polygonToggle">面積</label>
+                    <div id="output" style="display: inline"></div>
+                    <br> <input type="button" name=""
+                      value="閉じる" onclick="closeMeasure(this);">
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+
+  <div id="sakuzuPalette"
+    style="position: absolute; width: 175px; left: 350px; top: 100px; display: none;">
+    <table border="0" cellspacing="0" cellpadding="0"
+      style="width: 100%; height: 100px;">
+      <tr style="background-color: #CCCCCC">
+        <td id="dragbarS"
+          style="cursor: pointer; width: 100%; border: 1px #000000 solid; padding: 5px;"
+          onmousedown="initializedragS(event)"
+          onmouseup="terminatedrag(event)">
+          <div>
+            <span style="color: #000000; font-weight: bold;">作図機能</span> <img
+              id="sz_palette_close" src="http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/close.png"
+              style="height: 20px; width: 20px; float: right"
+              onclick="closeSakuzu(this);">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td
+          style="width: 100%; background-color: White; border: 1px #000000 solid;">
+          <div id="sakuzu" name="sakuzu" style="font: bold 0.7em;"></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="sakuzuPanel"
+    style="position: absolute; left: 650px; top: 300px; display: none;">
+    <table border="0" cellspacing="0" cellpadding="0"
+      style="width: 100%; padding: 5px;">
+      <tr id="panel-header" style="background-color: #CCCCCC">
+        <td id="dragbarP"
+          style="cursor: pointer; width: 90%; height: 100%; border: 1px #000000 solid; padding: 5px;"
+          onmousedown="initializedragP(event)"
+          onmouseup="terminatedrag(event)">
+          <div width="100%">
+            <span id="panel_title" style="color: #000000; font-weight: bold;"></span>
+            <img id="sz_panel_close" src="http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/close.png"
+              style="height: 20px; width: 20px; float: right">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td
+          style="width: 100%; background-color: White; border: 1px #000000 solid;">
+          <div id="panel" name="panel"
+            style="width: 100%; height: 100%; font: bold 0.7em;"></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="showprintsize"
+    style="cursor: default; position: absolute; width: 60px; right: 127px; top: 98px; display: none;">
+    <TABLE border=1 cellspacing=0 cellpadding=3 valign='center'>
+      <TR>
+        <TD class='sizemenu' onMouseOver='rollOver(this)'
+          onMouseOut='rollOut(this)' onclick='printmap(1);'><FONT
+          size='-1'>Ａ４縦</FONT></TD>
+      </TR>
+      <TR>
+        <TD class='sizemenu' onMouseOver='rollOver(this)'
+          onMouseOut='rollOut(this)' onclick='printmap(2);'><FONT
+          size='-1'>Ａ４横</FONT></TD>
+      </TR>
+      <TR>
+        <TD class='sizemenu' onMouseOver='rollOver(this)'
+          onMouseOut='rollOut(this)' onclick='printmap(3);'><FONT
+          size='-1'>Ａ３縦</FONT></TD>
+      </TR>
+      <TR>
+        <TD class='sizemenu' onMouseOver='rollOver(this)'
+          onMouseOut='rollOut(this)' onclick='printmap(4);'><FONT
+          size='-1'>Ａ３横</FONT></TD>
+      </TR>
+    </TABLE>
+  </div>
+
+  <div id="submenu" style='cursor: default; display: none;'></div>
+  <div id="configPanel" style="visibility: hidden"></div>
+  <div id="selectmappanel"></div>
+  <script type="text/javascript"><!--
+$(document).ready(function(){
+  arrange();
+  init();
+  ddd();
+
+  var sakuzu = $("#sakuzu");
+  sakuzuModule = sakuzu.Sakuzu({
+    mapEventHandler : new Sakuzu.OpenLayersDefaultHandler({
+      mapObj:map
+    }),
+    subPanel : $("#panel"),
+    mapSharePanel : $("#mapshare"),
+    layerObj : layerModule,
+    mapKeyboardControl : KeyboardDefaultsControl
+  });
+  sakuzuModule.init_ctrl();
+
+  csModule = $("#searchTab");
+  csModule.ChimeiSearch({
+    mapEventHandler : new ChimeiSearch.OpenLayersDefaultHandler({
+      mapObj : map
+    }),
+    sakuzuObj : sakuzuModule,
+    mapKeyboardControl : KeyboardDefaultsControl
+  });
+
+  if (keyword != ""){
+    document.getElementById("cs_chimei_text").value=decodeURIComponent(keyword);
+    document.getElementById("cs_chimei_text").className="";
+    tabInit = tabIdList["search"];
+    if (execsearch == ""){
+      var histURL = "site/mapuse4/index.html?lon=" + initCX + "&lat=" + initCY;
+      document.cookie = "hist=" + keyword +
+        "; expires=Tue, 1-Jan-2030 00:00:00 GMT; path=/";
+      document.cookie = "histURL=" + histURL +
+        "; expires=Tue, 1-Jan-2030 00:00:00 GMT; path=/;";
+    }
+  }
+  if (execsearch != ""){
+    var param = (initZoomLv > 0) ? "" + initZoomLv : "autoMove";
+    csModule.executeSearch(param);
+  }else{csModule.prncenter();}
+  if (kmlid != ''){
+    var parameter = {mode : 'url', fname : kmlid};
+    $.ajax({
+      type: "POST", async: false, url: READURL,
+      data: parameter, dataType: "jsonp",
+      success : function(data, status) {
+        if(data != null){
+          try {
+            Sakuzu.loadJSON(data, false);
+            sakuzuModule.disablePopupLayer();
+            if (dispFlg && sakuzuModule.CurrentMode == "none"){
+              sakuzuModule.enablePopupLayer();
+            }
+          } catch (e) {alert("ファイル読み込み中に例外が発生しました。");}
+        }
+      },
+      error : function(data, status) {alert("作図情報を読込めませんでした。");}
+    });
+  }
+
+  sakuzuSlider = new SakuzuSlider();
+
+  function createPluginTree(element, data, initialLibLayers) {
+    var module = $(element);
+    module.ShowPlugin(data, mapHandler, null);
+    module.init_ctrl();
+    module.initTree();
+    pluginModule[module.pluginID] = module;
+    pluginSliderModule[module.pluginID] = new PluginSlider(module.pluginID);
+    module.initShowLayers(initialLibLayers);
+  }
+  createPluginTree("#mapTab", libraryMapData, initialLibLayers);
+  createPluginTree("#geodeticTab", libraryGeodeticData, initialLibLayers);
+  createPluginTree("#saigaiTab", librarySaigaiData, initialLibLayers);
+  createPluginTree("#otherTab", libraryOtherData, initialLibLayers);
+  configMenu = $("#configButton");
+  configMenu.ConfigMenu({
+    panel: $("#configPanel")
+  });
+  selectMapPanel = $("#selectmappanel");
+  selectMapPanel.SelectMapPanel();
+  $('#infoTabs').tabs({selected: tabInit - 1});
+  if (dirInit) {
+    var tree = pluginModule[tabInit - 1].getTree();
+    tree.visit(function(node){node.expand(false);});
+    var keyList = dirInit.split(',')
+    for (var i = 0; i < keyList.length; i++) {
+      var node = tree.getNodeByKey(keyList[i]);
+      if (node) {
+        node.toggleExpand();
+      }
+    }
+  }
+  if (isFullscreen || checkMT()) fullscreen();
+  if (isReceiveGeoJson){$.receiveMessage(jsonReceiver);}
+  if (isReceivePrintData){$.receiveMessage(jsonPrintDataReceiver);}
+});
+--></script>
+</body>
+</html>
