@@ -1,5 +1,5 @@
 # legacy_old_gsimaps
-（レガシー）旧地理院地図
+（レガシー）平成27年1月以前の旧地理院地図のソース
 
 表示用URL: http://gsi-cyberjapan.github.io/legacy_old_gsimaps/old.html
 
