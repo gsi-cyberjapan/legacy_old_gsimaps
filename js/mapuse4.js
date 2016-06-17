@@ -5852,7 +5852,7 @@ OpenLayers.Popup.AnchoredBubble.CORNER_SIZE = 5;
 * DenshiKokudo Web API for OpenLayers
 *
 * Copyright 2012, Geospatial Information Authority of Japan, released under the FreeBSD
-* license. Please see http://portal.cyberjapan.jp/sys/v4/webtis/license.txt
+* license. Please see ./sys/v4/webtis/license.txt deleted the old domain.
 * for the full text of the license.
 *
 **/
@@ -5893,12 +5893,12 @@ webtis.SERVER_URL = {
 //		AVAILABLE_MAP_SERVER : "http://cyberjapandata.gsi.go.jp/cgi-bin/get-available-maps_test2.php",
 		METADATA_SERVER : "http://cyberjapandata.gsi.go.jp/cgi-bin/get-metadata.php",
 		AVAILABLE_MAP_SERVER : "http://cyberjapandata.gsi.go.jp/cgi-bin/get-available-maps.php",
-		GEOTIFF_TILE_SERVER : "http://gp.cyberjapan.jp/cjp4/service/get_geotiff_tile",
-		CONVERT_TO_JSON_SERVER : 'http://gp.cyberjapan.jp/cjp4/service/convert_to_json',
-		CONVERT_FROM_JSON_SERVER : 'http://gp.cyberjapan.jp/cjp4/service/convert_from_json',
-		SHOW_MAP_SERVER : 'http://gp.cyberjapan.jp/cjp4/service/show_map',
-		SAVE_JSON_SERVER : 'http://gp.cyberjapan.jp/cjp4/service/save_json',
-		CREATE_PDF_SERVER : 'http://gp.cyberjapan.jp/cjp4/service/create_pdf',
+		GEOTIFF_TILE_SERVER : "",      //deleted the old domain.
+		CONVERT_TO_JSON_SERVER : '',   //deleted the old domain.
+		CONVERT_FROM_JSON_SERVER : '', //deleted the old domain.
+		SHOW_MAP_SERVER : '',          //deleted the old domain.
+		SAVE_JSON_SERVER : '',          //deleted the old domain.
+		CREATE_PDF_SERVER : '',         //deleted the old domain.
 		TRANSPARENT_FILE : 'http://cyberjapandata.gsi.go.jp/sqras/transparent.png',
 //		VLCD_TILE_SERVER : 'http://cyberjapandata.gsi.go.jp/xyz/VLCD',							//火山土地条件図
 //		VBM_TILE_SERVER : 'http://geolib.gsi.go.jp/tiles/thematicmap/VBM',								//火山基本図
@@ -8084,7 +8084,7 @@ webtis.Control.DenshiKokudoLinks = OpenLayers.Class(OpenLayers.Control, {
 			this.div.style.left = "10px";
 
 			this.createCtrlImage("images/icon01.gif", 0, function(e) {
-				window.open("http://portal.cyberjapan.jp/index.html");
+				window.open("http://maps.gsi.go.jp/index.html"); //deleted the old domain.
 				OpenLayers.Event.stop(e);
 				return false;
 			});
@@ -16632,16 +16632,16 @@ function lookFor3DDisplayMode( sTargetName, sDataSetName )
 /** 地名検索用 JQueryプラグイン実装  **/
 var ChimeiSearch = {};
 ChimeiSearch.SIMPLE_GEOCODING = "http://geocode.csis.u-tokyo.ac.jp/cgi-bin/simple_geocode.cgi";
-/* ChimeiSearch.GEOCODE = "http://portal.cyberjapan.jp/GsiJsLibrary/geocode.php"; */
-/* ChimeiSearch.GEOCODE = "http://portal.cyberjapan.jp/GsiJsLibrary/geocode.php"; */
-/* ChimeiSearch.INTERFACE = "http://portal.cyberjapan.jp/GsiJsLibrary/interface.php"; */
-ChimeiSearch.INTERFACE = "http://temp.cyberjapandata.gsi.go.jp/GsiJsLibrary/interface.php";
-ChimeiSearch.SHISETSU_SEARCH = "http://portal.cyberjapan.jp/GsiJsLibrary/shisetsu.php";
-ChimeiSearch.CHIMEI_SEARCH = "http://portal.cyberjapan.jp/GsiJsLibrary/chimei.php";
-ChimeiSearch.CENTER_SEARCH = "http://portal.cyberjapan.jp/GsiJsLibrary/LonLatToLv01.php";
+/* ChimeiSearch.GEOCODE = ""; deleted the old domain. */
+/* ChimeiSearch.GEOCODE = ""; deleted the old domain. */
+/* ChimeiSearch.INTERFACE = ""; deleted the old domain. */
+ChimeiSearch.INTERFACE = ""; // deleted the old domain.
+ChimeiSearch.SHISETSU_SEARCH = ""; // deleted the old domain.
+ChimeiSearch.CHIMEI_SEARCH = ""; // deleted the old domain.
+ChimeiSearch.CENTER_SEARCH = ""; // deleted the old domain.
 
 
-ChimeiSearch.SERVER_ROOT = "http://search.cyberjapan.jp/cs4/cs/";
+ChimeiSearch.SERVER_ROOT = ""; // deleted the old domain.
 
 var LON_LAT_SPLIT = ['・', '、', ',', ' ', '　'];
 
@@ -18131,7 +18131,7 @@ ChimeiSearch.OpenLayersDefaultHandler = ChimeiSearch.Class({
 			var mapMeta = webtisMap.getCurrentMetaData();
 			var str = "";
 			if (mapMeta) str = mapMeta.dataId;
-			var histURL = "http://portal.cyberjapan.jp/site/mapuse/index.html?lon=" + x + "&lat=" + y + "&z=" + (zoomLevel);	// -- merge1227
+			var histURL = "" + x + "&lat=" + y + "&z=" + (zoomLevel);	// -- merge1227 deleted the old domain.
 			if (str!="") histURL += "&did=" + str;
 			document.cookie = "hist=" + encodeURIComponent(v) + "; expires=Tue, 1-Jan-2030 00:00:00 GMT; path=/";
 			document.cookie = "histURL=" + histURL + "; expires=Tue, 1-Jan-2030 00:00:00 GMT; path=/;";
@@ -18169,7 +18169,7 @@ function syousai(flag)	{
 //
 /** レイヤ表示用 JQueryプラグイン実装 **/
 var ShowLayer = {};
-var receiveDomain = 'http://gp.cyberjapan.jp';
+var receiveDomain = ''; //deleted the old domain.
 
 (function($){
 jQuery.fn.ShowLayer = function(config) {
@@ -25168,10 +25168,10 @@ function httplink(lon, lat){
     http = hikisu_all[0] + "?lat=" + lat4 + "&lon=" + lon4 + "&z=" + zoom + "&did=" + str;
 
 	//現在表示位置情報(Twitter用)
-	var getURL = "http://portal.cyberjapan.jp/site/mapuse/index.html?lat=" + lat4 + "&lon=" + lon4 + "&z=" + zoom + "&did=" + str;
+	var getURL = "?lat=" + lat4 + "&lon=" + lon4 + "&z=" + zoom + "&did=" + str; // deleted the old domain.
 
 	// URLをセット
-	$("#twitter").html('<a href="https://twitter.com/share" id="twitter" class="twitter-share-button" data-url="'+ getURL + '" data-text="電子国土Web.Next" data-lang="ja" data-count="none" data-hashtags="cyberjapan_next">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>');
+	//$("#twitter").html('<a href="https://twitter.com/share" id="twitter" class="twitter-share-button" data-url="'+ getURL + '" data-text="電子国土Web.Next" data-lang="ja" data-count="none" data-hashtags="cyberjapan_next">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>'); //deleted the old domain.
 	document.getElementById('urllink').value = http;
 }
 
@@ -25322,8 +25322,8 @@ function utmPointDraw(px,py)	{
 	//000-000を正しく表示するため
 	var utmPx = Math.round(utmP.x);
 	var utmPy = Math.round(utmP.y);
-	var urlstr = "http://portal.cyberjapan.jp/site/mapuse4/grid/utm_point.php?utmx=" + utmPx + "&utmy=" + utmPy + "&utmzone=" + zone + "&lon=" + px + "&lat=" + py;
-	
+	var urlstr = "?utmx=" + utmPx + "&utmy=" + utmPy + "&utmzone=" + zone + "&lon=" + px + "&lat=" + py; // deleted the old domain.
+	return; // deleted the old domain.
 	//jQueryを経由して、JSONPを使用
 	$.ajax({
 		dataType: "jsonp",		//ここは固定誇示列
@@ -25370,9 +25370,9 @@ function utmPointClear()	{
 function utmGridDraw()	{
 	var rect = map.getExtent().transform(projection900913,projection4326);
 	if(map.getZoom() <= 13){
-		var url = "http://portal.cyberjapan.jp/site/mapuse4/grid/10k_grid.php?rectLonLat="+rect;
+		var url = "?rectLonLat="+rect; // deleted the old domain.
 	} else {
-		var url = "http://portal.cyberjapan.jp/site/mapuse4/grid/1k_grid.php?rectLonLat="+rect;
+		var url = "?rectLonLat="+rect; // deleted the old domain.
 	}
 	
 	var myutmgridStyles = new OpenLayers.StyleMap({
@@ -25401,8 +25401,7 @@ function utmGridDraw()	{
 	
 	$.ajax({
 		dataType: "jsonp",
-		url: "./site/mapuse4/kml2jsonp.php?lf=0&url=" + encodeURIComponent(url),
-		//url: "http://portal.cyberjapan.jp/site/mapuse4/kml2jsonp.php?lf=0&url=" + encodeURIComponent(url),
+		url: "./kml2jsonp.php?lf=0&url=" + encodeURIComponent(url), // deleted the old domain.
 		jsonpCallback: "kml_loaded",
 		success: function(json) {
 			var utmGridLayer = new OpenLayers.Layer.Vector("utmGrid", {
@@ -25459,8 +25458,8 @@ function lonlatGridDraw(interval)	{
 	lonlatGridClear();
 	
 	var rect = map.getExtent().transform(projection900913,projection4326);
-	var url1 = "http://portal.cyberjapan.jp/site/mapuse4/grid/lonlatline.php?rectLonLat="+rect + "&interval=" + interval;	//ライン用
-	var url2 = "http://portal.cyberjapan.jp/site/mapuse4/grid/lonlatstr.php?rectLonLat="+rect + "&interval=" + interval;	//ラベル用
+	var url1 = "?rectLonLat="+rect + "&interval=" + interval;	//ライン用 deleted the old domain.
+	var url2 = "?rectLonLat="+rect + "&interval=" + interval;	//ラベル用 deleted the old domain.
 
 	// ラインスタイル
 	var myLineStyles = new OpenLayers.StyleMap({
@@ -25485,8 +25484,7 @@ function lonlatGridDraw(interval)	{
 	// => ただし、同時にmapへの更新が走るのを防ぐため、ライン->ラベルの順で取得する。
 	$.ajax({
 		dataType: "jsonp",
-		url: "./site/mapuse4/kml2jsonp.php?lf=1&url=" + encodeURIComponent(url1), jsonpCallback: "kml_loaded",
-		//url: "http://portal.cyberjapan.jp/site/mapuse4/kml2jsonp.php?lf=1&url=" + encodeURIComponent(url1), jsonpCallback: "kml_loaded",
+		url: "./kml2jsonp.php?lf=1&url=" + encodeURIComponent(url1), jsonpCallback: "kml_loaded", //deleted the old domain.
 		success: function(json) {
 			var data1 = json.data.replace(/\\n/g, "\n");
 			var kmlLayer1 = new OpenLayers.Layer.Vector("LonLatLine", {
@@ -25506,8 +25504,7 @@ function lonlatGridDraw(interval)	{
 			kmlLayer1.redraw();
 			$.ajax({
 				dataType: "jsonp",
-				url: "./site/mapuse4/kml2jsonp.php?lf=1&url=" + encodeURIComponent(url2),
-				//url: "http://portal.cyberjapan.jp/site/mapuse4/kml2jsonp.php?lf=1&url=" + encodeURIComponent(url2),
+				url: "./kml2jsonp.php?lf=1&url=" + encodeURIComponent(url2), // deleted the old domain.
 				jsonpCallback: "kml_loaded",
 				success: function(json) {
 					var data2 = json.data.replace(/\\n/g, "\n");
@@ -25652,7 +25649,7 @@ function createLinkURL(cx, cy, scale, name)	{		//リンクのURLを作成する�
 			linkURL = "http://www.mapion.co.jp/m/" + cy + "_" + cx + "_" + zoomLevel(scale, 2) + "/?wgs=1";
 			break;
 		default:				//どこにも当てはまらない場合（エラー処理）
-			linkURL = "http://portal.cyberjapan.jp/";
+			linkURL = "http://maps.gsi.go.jp/"; //deleted the old domain.
 			break;
 	}
 	return linkURL;		//URLを返す
@@ -27041,10 +27038,10 @@ OpenLayers.Control.ScaleBar = OpenLayers.Class(OpenLayers.Control, {
 //
 /** 作図用 JQueryプラグイン実装 **/
 var Sakuzu= {};
-var READURL = "http://gp.cyberjapan.jp/cjp4/service/gsi_convert_to_json";
-var SAVEURL = "http://gp.cyberjapan.jp/cjp4/service/gsi_convert_from_json";
+var READURL = ""; // deleted the old domain.
+var SAVEURL = ""; // deleted the old domain.
 
-Sakuzu.SERVER_ROOT = "http://portal.cyberjapan.jp";
+Sakuzu.SERVER_ROOT = "http://maps.gsi.go.jp"; // deleted the old domain.
 Sakuzu.IMAGE_ROOT = "http://cyberjapandata.gsi.go.jp/portal/sys/v4/image/";
 
 // アイコン
@@ -27400,7 +27397,7 @@ jQuery.fn.Sakuzu = function(config) {
 			saveForm.submit();
 
 			// URLを作成
-			var url = "http://portal.cyberjapan.jp/site/mapuse4/index.html?lat=" + mapinfo.lat + "&lon=" + mapinfo.lon + "&z=" + mapinfo.zoomLevel + "&did=" + mapinfo.did + "&fid=" + filename;
+			var url = "./site/mapuse4/index.html?lat=" + mapinfo.lat + "&lon=" + mapinfo.lon + "&z=" + mapinfo.zoomLevel + "&did=" + mapinfo.did + "&fid=" + filename; // deleted the old domain.
 			var ret = getSelectedLayerString(1);
 			if (ret){
 				url = url + ret.layerString;
@@ -28847,7 +28844,7 @@ jQuery.fn.Sakuzu = function(config) {
 			var current = Sakuzu.getCurrent();
 
 			// ファイルに地図情報を設定して、ダウンロード
-			savehtml.attr("action","http://portal.cyberjapan.jp/site/mapuse4/save/ifrsave_html.php");
+			savehtml.attr("action",""); // deleted the old domain.
 			
 			var lat = String(Math.floor(mapinfo.lat * 1000000) / 1000000);
 			var lon = String(Math.floor(mapinfo.lon * 1000000) / 1000000);
@@ -28861,10 +28858,10 @@ jQuery.fn.Sakuzu = function(config) {
 		    var treeparam = treeModule.getSelectedLayerString();
 			if (treeparam) url = url + "&" + treeparam;
 */
-			savehtml.find("#json").val(gejson);
-			savehtml.find("#deffile").val("gsi" + current + ".html");
-			savehtml.find("#mapurl").val(url);
-			savehtml.submit();
+			//savehtml.find("#json").val(gejson);                       // deleted the old domain.
+			//savehtml.find("#deffile").val("gsi" + current + ".html"); // deleted the old domain.
+			//savehtml.find("#mapurl").val(url);                        // deleted the old domain.
+			//savehtml.submit();                                        // deleted the old domain.
 		}
 		catch (e) {
 			alert("html保存中に例外が発生しました。");
@@ -28917,7 +28914,7 @@ jQuery.fn.Sakuzu = function(config) {
 		var lat = String(Math.floor(mapinfo.lat * 1000000) / 1000000);
 		var lon = String(Math.floor(mapinfo.lon * 1000000) / 1000000);
 		var url = getURL() + "?lat=" + lat + "&lon=" + lon + "&z=" + mapinfo.zoomLevel + "&did=" + mapinfo.did;
-//	    var url = "http://portal.cyberjapan.jp/site/mapuse4/index.html?lat=" + lat + "&lon=" + lon + "&z=" + mapinfo.zoomLevel + "&did=" + mapinfo.did;
+//	    var url = "./site/mapuse4/index.html?lat=" + lat + "&lon=" + lon + "&z=" + mapinfo.zoomLevel + "&did=" + mapinfo.did; // deleted the old domain.
 	    if (filename) url += ("&fid=" + filename);
 	    if (centercross) url += ("&crs=1");	// 中心位置の十字線
 	    var activeTab = $('#infoTabs').tabs("option", "selected");
@@ -28937,7 +28934,7 @@ jQuery.fn.Sakuzu = function(config) {
 	    window.hideIFRAME = isURL;
 	    var delimiter = "|";
 	    var windowParam = url + delimiter + hideURL + delimiter + hideIFRAME;
-	    window.open("http://portal.cyberjapan.jp/site/mapuse4/httplink.html?httplinkparam=" + windowParam,"httplink","width=480,height=200,menubar=no,toolbar=no,scrollbar=no");
+	    window.open("./site/mapuse4/httplink.html?httplinkparam=" + windowParam,"httplink","width=480,height=200,menubar=no,toolbar=no,scrollbar=no"); // deleted the old domain.
 
 	}
 	
@@ -40347,8 +40344,8 @@ jQuery.fn.ConfigMenu = function(config) {
 		var mapinfo = sakuzuModule.createParameter();
 		var lat = String(Math.floor(mapinfo.lat * 1000000) / 1000000);
 		var lon = String(Math.floor(mapinfo.lon * 1000000) / 1000000);
-		var url = "http://portal.cyberjapan.jp/site/mapusef/?lat=" + lat + "&lon=" + lon + "&z=" + mapinfo.zoomLevel;
-		window.open(url);
+		var url = "?lat=" + lat + "&lon=" + lon + "&z=" + mapinfo.zoomLevel; // deleted the old domain.
+		//window.open(url); // deleted the old domain.
 		ConfigMenu.close();
 	}, this);
 
@@ -41883,9 +41880,9 @@ var mapHandler = {
 
 		$.ajax({
 			dataType: "jsonp",
-//			url: "./kml2jsonp.php?lf=0&url=" + encodeURIComponent(data.path),
-//			url: "http://portal.cyberjapan.jp/site/mapuse4/kml2jsonp.php?lf=0&url=" + encodeURIComponent(data.path),
-			url: "./site/mapuse4/kml2jsonp.php?lf=0&url=" + encodeURIComponent(data.path),
+			url: "./kml2jsonp.php?lf=0&url=" + encodeURIComponent(data.path),
+//			url: "?lf=0&url=" + encodeURIComponent(data.path), // deleted the old domain.
+			//url: "./site/mapuse4/kml2jsonp.php?lf=0&url=" + encodeURIComponent(data.path),
 			jsonpCallback: "kml_loaded_" + data.key.replace(/-/g, "_"),
 			success: function(json) {
 				var format = new OpenLayers.Format.KML({
@@ -42740,8 +42737,8 @@ function onPhotoPoint_reload(key, pluginID)
 
 	$.ajax({
 		dataType: "jsonp",
-		url: "./site/mapuse4/kml2jsonp.php",
-		//url: "http://portal.cyberjapan.jp/site/mapuse4/kml2jsonp.php",
+		url: "./kml2jsonp.php", // deleted the old domain.
+		//url: "", // deleted the old domain.
 		data: {
 			"lf": 0,
 			"url": url
@@ -48202,7 +48199,7 @@ dataSetObj.getURL_photoPoint = function(data){
 
 	var photoYearFromTo = data.key.split("_");
 	var extent = null;
-	var urlPhotoList = "http://portal.cyberjapan.jp/GsiJsLibrary/photoprot.php?topLat=";
+	var urlPhotoList = "?topLat="; // deleted the old domain.
 
 	if (data.extent) {
 		extent = data.extent.split("_");

@@ -330,7 +330,7 @@ webtis.Control.djplogo = OpenLayers.Class(OpenLayers.Control, {
 			this.div.style.bottom = 38 + "px";
 			this.div.style.left = 10 + "px";
 			this.createCtrlImage("http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/icon01.gif", 0, function(e) {
-				window.open("http://portal.cyberjapan.jp/", "_blank");
+				window.open("http://maps.gsi.go.jp/", "_blank");//deleted the old domain
 				OpenLayers.Event.stop(e);
 				return false;
 			});
@@ -1823,8 +1823,7 @@ function openNewGSIMaps() {
   <div id="header" style="display: none;">
     <div style="display: block">
       <div style="padding-left: 0px; padding-top: 10px;">
-        <a href="site/mapuse4/"><img src="http://cyberjapandata.gsi.go.jp/portal/site/mapuse4/image/title05+denkoku2.png"
-          width="238px" height="40px"></a>
+        <!-- logo image -->
       </div>
       <div style="position: absolute; top: 5px; left:240px; font-weight:bold;">
         <font size="3">
@@ -1914,8 +1913,7 @@ function openNewGSIMaps() {
 
       </div>
       <div id="accesscounter" style="clear: both;">
-        <!-- <iframe src="http://portal.cyberjapan.jp/count/count.php?id=014"
-          height="50" width="300" frameborder="0" scrolling="no" align="left"></iframe> -->
+        <!-- deleted the old domain. -->
       </div>
       <div style="text-align: right">
         <font size="2" color="#555555">since 2013.10.30</font>
